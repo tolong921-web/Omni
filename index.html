@@ -104,26 +104,31 @@
       pointer-events: auto;
     }
 
-    /* Thiết kế Lọ Thủy Tinh */
+    /* Lọ Thủy Tinh & Ngôi sao lấp lánh */
     .glass-jar {
       background: linear-gradient(135deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.04) 100%);
       border: 2.5px solid rgba(255, 255, 255, 0.28);
-      box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.12), 0 12px 28px rgba(0, 0, 0, 0.35);
       backdrop-filter: blur(6px);
+      transition: box-shadow 0.5s ease, border-color 0.5s ease;
     }
     .cork-lid {
       background: linear-gradient(90deg, #b45309 0%, #d97706 50%, #92400e 100%);
       border-bottom: 3px solid #78350f;
     }
 
-    @keyframes dropInJar {
-      0% { transform: translateY(-90px) scale(0.5) rotate(0deg); opacity: 0; }
-      70% { transform: translateY(6px) scale(1.08) rotate(12deg); opacity: 1; }
-      100% { transform: translateY(0) scale(1) rotate(var(--rot, 6deg)); opacity: 1; }
+    @keyframes starDrop {
+      0% { transform: translateY(-120px) scale(0.2) rotate(0deg); opacity: 0; }
+      50% { transform: translateY(10px) scale(1.2) rotate(180deg); opacity: 1; }
+      100% { transform: translateY(0) scale(1) rotate(var(--rot, 360deg)); opacity: 1; }
     }
-    .jar-item-anim {
-      animation: dropInJar 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    .star-anim {
+      animation: starDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      filter: drop-shadow(0 0 6px currentColor);
     }
+
+    /* Hiệu ứng mờ khóa ký ức */
+    .memory-cover { transition: opacity 0.4s ease, backdrop-filter 0.4s ease; }
+    .memory-revealed .memory-cover { opacity: 0; pointer-events: none; backdrop-filter: blur(0px); }
 
     .wooden-shelf-row {
       border-bottom: 8px solid #451a03;
@@ -244,8 +249,8 @@
         <div class="flex items-center gap-2.5">
           <div class="w-9 h-9 rounded-xl bg-pink-500/20 border border-pink-400/30 flex items-center justify-center text-lg">🫙</div>
           <div>
-            <div class="text-xs font-bold text-pink-200">Lọ Hôm Nay (<span id="homeJarCount">0</span> khoảnh khắc)</div>
-            <div class="text-[10px] text-slate-400">Chạm để chụp Locket hoặc thả note nhỏ ✨</div>
+            <div class="text-xs font-bold text-pink-200">Lọ Hôm Nay (<span id="homeJarCount">0</span> ngôi sao)</div>
+            <div class="text-[10px] text-slate-400">Chạm để thả sao Locket hoặc Note nhỏ ✨</div>
           </div>
         </div>
         <i class="ph ph-caret-right text-pink-300"></i>
@@ -272,7 +277,7 @@
           </button>
           <div>
             <h2 class="text-xs font-black tracking-wide text-pink-300 flex items-center gap-1">
-              🫙 LỌ KỶ NIỆM LOCKET
+              🫙 NGÂN HÀ KỶ NIỆM
             </h2>
             <div id="jarSelectedDateLabel" class="text-[10px] text-slate-400">Hôm nay</div>
           </div>
@@ -286,53 +291,68 @@
 
       <!-- TAB 1: CHIẾC LỌ TRONG NGÀY -->
       <div id="jarTodayView" class="flex-1 flex flex-col justify-between p-4 overflow-y-auto no-scrollbar">
-        <div class="my-auto flex flex-col items-center justify-center py-2">
-          <div class="w-24 h-5 cork-lid rounded-t-lg shadow-md z-10"></div>
+        
+        <!-- Khung Lọ Thủy Tinh -->
+        <div class="my-auto flex flex-col items-center justify-center py-2 relative">
+          <!-- Decor Lễ Hội -->
+          <div id="seasonalDecorTop" class="absolute -top-6 z-20 text-4xl pointer-events-none drop-shadow-md"></div>
+
+          <div class="w-24 h-5 cork-lid rounded-t-lg shadow-md z-10 relative"></div>
           <div class="w-28 h-3 bg-white/20 border-x-2 border-t-2 border-white/30 rounded-t-sm"></div>
           
-          <div onclick="openDayMemoriesModal()" class="relative w-52 h-64 glass-jar rounded-3xl p-3 flex flex-col justify-end items-center cursor-pointer active:scale-95 transition-transform overflow-hidden group">
+          <div id="mainGlassJar" onclick="openDayMemoriesModal()" class="relative w-52 h-64 glass-jar shadow-[inset_0_0_20px_rgba(255,255,255,0.12),0_12px_28px_rgba(0,0,0,0.35)] rounded-3xl p-3 flex flex-col justify-end items-center cursor-pointer active:scale-95 transition-all overflow-hidden group">
+            <div id="seasonalDecorInside" class="absolute inset-0 pointer-events-none opacity-40 mix-blend-overlay text-6xl text-center pt-10"></div>
+            
             <div class="absolute top-3 left-3 w-2.5 h-44 bg-white/15 rounded-full blur-[1px] pointer-events-none"></div>
             <div class="absolute top-4 right-3.5 w-1 h-20 bg-white/10 rounded-full pointer-events-none"></div>
 
             <div class="absolute top-5 inset-x-6 bg-amber-50/90 text-slate-900 rounded-xl px-2.5 py-1.5 text-center shadow-md border border-amber-200/60 pointer-events-none">
               <div id="jarTagDate" class="text-[10px] font-black uppercase tracking-wider text-amber-900">16 THÁNG 10</div>
-              <div id="jarTagCount" class="text-[9px] font-semibold text-slate-600">0 mảnh ký ức</div>
+              <div id="jarTagCount" class="text-[9px] font-semibold text-slate-600">0 ngôi sao</div>
             </div>
 
-            <div id="jarItemsContainer" class="w-full flex flex-wrap-reverse items-center justify-center gap-1.5 pt-16 pb-1 max-h-44 overflow-hidden"></div>
+            <!-- Nơi chứa các ngôi sao -->
+            <div id="jarItemsContainer" class="w-full flex flex-wrap-reverse items-center justify-center gap-2 pt-16 pb-2 max-h-44 overflow-hidden"></div>
 
-            <div class="mt-1 text-[9px] text-pink-200/80 font-semibold group-hover:text-white flex items-center gap-1">
-              <i class="ph ph-sparkle"></i> Chạm vào lọ để khui kỷ niệm
+            <div class="mt-1 text-[9px] text-pink-200/80 font-semibold group-hover:text-white flex items-center gap-1 z-10">
+              <i class="ph ph-sparkle"></i> Chạm vào lọ để mở khóa
             </div>
           </div>
         </div>
 
-        <div class="bg-slate-900/90 border border-white/10 rounded-2xl p-3 space-y-2.5 shadow-xl backdrop-blur-md">
-          <div class="flex items-center justify-between text-xs px-1">
-            <span class="text-[10px] font-bold text-slate-400 uppercase">Cảm xúc lúc này:</span>
-            <div class="flex items-center gap-1.5" id="moodSelector">
-              <button onclick="selectMood('😊', 'bg-amber-300')" class="mood-btn w-6 h-6 rounded-full bg-white/15 flex items-center justify-center text-xs scale-110 ring-2 ring-pink-400">😊</button>
-              <button onclick="selectMood('🥰', 'bg-pink-300')" class="mood-btn w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs">🥰</button>
-              <button onclick="selectMood('✨', 'bg-cyan-300')" class="mood-btn w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs">✨</button>
-              <button onclick="selectMood('🌿', 'bg-emerald-300')" class="mood-btn w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs">🌿</button>
-              <button onclick="selectMood('💤', 'bg-indigo-300')" class="mood-btn w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs">💤</button>
-            </div>
+        <!-- Khung nhập liệu & Bàn phím Emoji -->
+        <div class="bg-slate-900/90 border border-white/10 rounded-2xl p-3 space-y-2.5 shadow-xl backdrop-blur-md relative">
+          
+          <!-- Lưới Emoji (Ẩn/Hiện) -->
+          <div id="emojiGrid" class="hidden absolute bottom-full left-0 mb-2 w-full bg-slate-800/95 backdrop-blur-md border border-white/15 rounded-xl p-2 max-h-40 overflow-y-auto grid grid-cols-7 gap-1 shadow-2xl z-50">
+            <!-- Render JS -->
           </div>
 
-          <div class="flex items-center gap-2">
-            <input type="text" id="quickNoteInput" placeholder="Viết một điều nhỏ xíu dễ thương..." 
-              class="flex-1 bg-slate-800/90 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-pink-400">
-            <button onclick="dropQuickNoteIntoJar()" class="px-3 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold text-xs flex items-center gap-1 active:scale-90 shadow-md">
-              <i class="ph ph-paper-plane-tilt"></i> Thả
+          <div class="flex items-center justify-between px-1">
+            <button onclick="toggleEmojiPicker()" class="flex items-center gap-1.5 px-2 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold text-white transition-colors">
+              <span id="currentSelectedEmoji" class="text-base drop-shadow">😊</span>
+              <i class="ph ph-caret-down text-[10px] text-slate-400"></i>
             </button>
+            <div class="text-[9px] text-emerald-400 font-semibold tracking-wider uppercase">Thả sao kỷ niệm</div>
+          </div>
+
+          <!-- Input Địa điểm & Text -->
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-2">
+              <div class="flex items-center bg-slate-800/90 border border-white/10 rounded-xl px-2.5 py-2 w-1/3 text-xs">
+                <i class="ph-fill ph-map-pin text-rose-400 mr-1.5"></i>
+                <input type="text" id="quickNoteLocation" placeholder="Địa điểm..." class="w-full bg-transparent text-white placeholder-slate-400 focus:outline-none">
+              </div>
+              <input type="text" id="quickNoteInput" placeholder="Viết một điều nhỏ xíu dễ thương..." class="flex-1 bg-slate-800/90 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-pink-400">
+            </div>
           </div>
 
           <div class="grid grid-cols-2 gap-2 pt-0.5">
             <button onclick="openLocketCameraModal()" class="py-2 rounded-xl bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95">
-              <i class="ph-fill ph-camera text-sm"></i> Chụp ảnh Locket
+              <i class="ph-fill ph-camera text-sm"></i> Chụp Locket
             </button>
-            <button onclick="openDayMemoriesModal()" class="py-2 rounded-xl bg-white/10 border border-white/10 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 active:scale-95">
-              <i class="ph ph-cards text-sm"></i> Mở lọ xem (<span id="btnJarCount">0</span>)
+            <button onclick="dropQuickNoteIntoJar()" class="py-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 shadow-md">
+              <i class="ph-fill ph-star text-sm"></i> Thả Sao Note
             </button>
           </div>
         </div>
@@ -347,7 +367,7 @@
             </button>
             <div class="text-center">
               <div id="shelfMonthTitle" class="text-xs font-black text-amber-300 uppercase tracking-wider">THÁNG 10 / 2026</div>
-              <div class="text-[10px] text-slate-400">Mỗi ngày là một chiếc lọ nhỏ trên kệ</div>
+              <div class="text-[10px] text-slate-400">Kệ trưng bày ngân hà</div>
             </div>
             <button onclick="changeShelfMonth(1)" class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white active:scale-90">
               <i class="ph ph-caret-right"></i>
@@ -362,68 +382,47 @@
     <!-- ==================== MODAL CHỤP ẢNH LOCKET ==================== -->
     <div id="locketCameraModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
       <div class="w-full max-w-xs bg-slate-900 border border-pink-500/30 rounded-3xl p-4 flex flex-col items-center gap-3 shadow-2xl relative">
-        <button onclick="closeLocketCameraModal()" class="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-white/10 text-slate-300 flex items-center justify-center">
-          <i class="ph ph-x"></i>
-        </button>
-
-        <div class="text-xs font-black text-pink-300 tracking-wider uppercase flex items-center gap-1">
-          <i class="ph-fill ph-camera"></i> LOCKET MOMENT
-        </div>
-
+        <button onclick="closeLocketCameraModal()" class="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-white/10 text-slate-300 flex items-center justify-center"><i class="ph ph-x"></i></button>
+        <div class="text-xs font-black text-pink-300 tracking-wider uppercase flex items-center gap-1"><i class="ph-fill ph-camera"></i> LOCKET MOMENT</div>
         <div class="relative w-60 h-60 rounded-3xl overflow-hidden bg-slate-950 border-2 border-pink-400/40 shadow-inner flex items-center justify-center">
           <video id="locketVideo" autoplay playsinline class="w-full h-full object-cover hidden"></video>
           <img id="locketPreviewImg" class="w-full h-full object-cover hidden" alt="Locket Preview">
-          
           <div id="locketPlaceholder" class="flex flex-col items-center justify-center text-center p-4 text-slate-400">
             <i class="ph ph-camera-plus text-4xl text-pink-400 mb-2"></i>
-            <span class="text-[11px]">Bật Camera hoặc chọn ảnh từ thư viện để đóng gói vào lọ</span>
+            <span class="text-[11px]">Bật Camera hoặc chọn ảnh để biến thành sao lưu vào lọ</span>
           </div>
-
           <div class="absolute bottom-2.5 inset-x-3">
-            <input type="text" id="locketCaptionInput" placeholder="Thêm lời nhắn trên ảnh..." 
-              class="w-full bg-black/60 backdrop-blur-md text-white text-center text-xs font-medium py-1.5 px-3 rounded-full border border-white/15 focus:outline-none focus:border-pink-400">
+            <input type="text" id="locketCaptionInput" placeholder="Lời nhắn trên ảnh..." class="w-full bg-black/60 backdrop-blur-md text-white text-center text-xs font-medium py-1.5 px-3 rounded-full border border-white/15 focus:outline-none focus:border-pink-400">
           </div>
         </div>
-
-        <div class="w-full flex items-center justify-center gap-2.5 pt-1">
-          <button onclick="startCameraStream()" id="btnStartCam" class="flex-1 py-2 rounded-xl bg-white/10 text-white text-xs font-semibold flex items-center justify-center gap-1 active:scale-95">
-            <i class="ph ph-video-camera"></i> Mở Cam
-          </button>
-          <button onclick="captureLocketPhoto()" id="btnCaptureCam" class="hidden flex-1 py-2 rounded-xl bg-rose-500 text-white text-xs font-bold flex items-center justify-center gap-1 active:scale-95">
-            <i class="ph-fill ph-circle"></i> Chụp ngay
-          </button>
-          <label class="flex-1 py-2 rounded-xl bg-white/10 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1 cursor-pointer active:scale-95 text-center">
-            <i class="ph ph-image"></i> Chọn ảnh
-            <input type="file" accept="image/*" onchange="handleLocketFileUpload(event)" class="hidden">
-          </label>
+        <div class="w-full flex flex-col gap-2 pt-1">
+          <div class="flex items-center gap-2">
+            <button onclick="startCameraStream()" id="btnStartCam" class="flex-1 py-2 rounded-xl bg-white/10 text-white text-xs font-semibold flex items-center justify-center gap-1 active:scale-95"><i class="ph ph-video-camera"></i> Mở Cam</button>
+            <button onclick="captureLocketPhoto()" id="btnCaptureCam" class="hidden flex-1 py-2 rounded-xl bg-rose-500 text-white text-xs font-bold flex items-center justify-center gap-1 active:scale-95"><i class="ph-fill ph-circle"></i> Chụp ngay</button>
+            <label class="flex-1 py-2 rounded-xl bg-white/10 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1 cursor-pointer active:scale-95 text-center"><i class="ph ph-image"></i> Chọn ảnh<input type="file" accept="image/*" onchange="handleLocketFileUpload(event)" class="hidden"></label>
+          </div>
+          <button onclick="saveLocketToJar()" class="w-full py-2.5 rounded-2xl bg-gradient-to-r from-pink-500 to-amber-500 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 shadow-lg active:scale-95"><i class="ph-fill ph-star"></i> Thả sao Locket vào lọ</button>
         </div>
-
-        <button onclick="saveLocketToJar()" class="w-full py-2.5 rounded-2xl bg-gradient-to-r from-pink-500 to-amber-500 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 shadow-lg active:scale-95">
-          <i class="ph-fill ph-sparkle"></i> Bỏ ảnh Locket vào lọ hôm nay
-        </button>
       </div>
     </div>
 
 
-    <!-- ==================== MODAL KHUI LỌ XEM KỶ NIỆM ==================== -->
+    <!-- ==================== MODAL KHUI LỌ (MỞ KHÓA KỶ NIỆM BỊ ẨN) ==================== -->
     <div id="dayMemoriesModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex flex-col justify-end">
       <div class="w-full max-w-md mx-auto bg-slate-900 border-t border-pink-400/30 rounded-t-3xl max-h-[82vh] flex flex-col p-4 shadow-2xl">
         <div class="flex items-center justify-between pb-3 border-b border-white/10">
           <div class="flex items-center gap-2">
-            <span class="text-xl">🫙</span>
+            <span class="text-xl">✨</span>
             <div>
-              <h3 id="modalJarTitleDate" class="text-sm font-black text-white">Kỷ Niệm Ngày 16/10</h3>
-              <p class="text-[10px] text-pink-300">Tất cả khoảnh khắc Locket & Note nhỏ đã gom lại</p>
+              <h3 id="modalJarTitleDate" class="text-sm font-black text-white">Dải Ngân Hà Ngày 16/10</h3>
+              <p class="text-[10px] text-emerald-300 animate-pulse">Chạm vào từng thẻ bị mờ để mở khóa xem!</p>
             </div>
           </div>
-          <button onclick="closeDayMemoriesModal()" class="w-8 h-8 rounded-full bg-white/10 text-slate-300 flex items-center justify-center">
-            <i class="ph ph-x"></i>
-          </button>
+          <button onclick="closeDayMemoriesModal()" class="w-8 h-8 rounded-full bg-white/10 text-slate-300 flex items-center justify-center hover:bg-white/20"><i class="ph ph-x"></i></button>
         </div>
         <div id="dayMemoriesList" class="flex-1 overflow-y-auto py-3 space-y-3 no-scrollbar"></div>
       </div>
     </div>
-
 
     <!-- ==================== 3. APP FEED KHÁM PHÁ KIỂU TIKTOK ==================== -->
     <div id="readerApp" class="app-screen app-closed absolute inset-0 z-30 bg-black flex flex-col justify-between overflow-hidden">
@@ -935,16 +934,29 @@
     let currentFontFamily = localStorage.getItem('omni_font_family') || 'sans';
     let isSpeaking = false;
 
-    /* ==================== 2. DỮ LIỆU LỌ KỶ NIỆM & LOCKET ==================== */
+    /* ==================== 2. DỮ LIỆU LỌ KỶ NIỆM & EMOJI ==================== */
     const todayKey = () => {
       const d = new Date();
       return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     };
 
-    let jarLogs = JSON.parse(localStorage.getItem('omni_cute_jar_v1')) || {};
+    // Bảng 30+ Emoji & Mã Màu Dạ Quang cho Ngôi Sao / Viền Lọ
+    const EMOJI_LIST = [
+      { e: '😊', c: '#fcd34d', bg: 'bg-amber-300' }, { e: '🥰', c: '#f9a8d4', bg: 'bg-pink-300' }, { e: '😂', c: '#fde047', bg: 'bg-yellow-300' },
+      { e: '😎', c: '#93c5fd', bg: 'bg-blue-300' }, { e: '🥺', c: '#c4b5fd', bg: 'bg-purple-300' }, { e: '😭', c: '#7dd3fc', bg: 'bg-sky-300' },
+      { e: '😡', c: '#fca5a5', bg: 'bg-red-300' }, { e: '😴', c: '#cbd5e1', bg: 'bg-slate-300' }, { e: '✨', c: '#67e8f9', bg: 'bg-cyan-300' },
+      { e: '🌿', c: '#6ee7b7', bg: 'bg-emerald-300'}, { e: '🌸', c: '#f472b6', bg: 'bg-pink-400' }, { e: '🔥', c: '#fb923c', bg: 'bg-orange-400' },
+      { e: '❤️', c: '#ef4444', bg: 'bg-red-500' }, { e: '💔', c: '#94a3b8', bg: 'bg-slate-400' }, { e: '🎉', c: '#d946ef', bg: 'bg-fuchsia-500' },
+      { e: '💡', c: '#fef08a', bg: 'bg-yellow-200' }, { e: '🍀', c: '#34d399', bg: 'bg-emerald-400'}, { e: '🎵', c: '#818cf8', bg: 'bg-indigo-400' },
+      { e: '☕', c: '#d6d3d1', bg: 'bg-stone-300' }, { e: '🍔', c: '#fdba74', bg: 'bg-orange-300' }, { e: '💪', c: '#fbbf24', bg: 'bg-amber-400' },
+      { e: '✈️', c: '#bae6fd', bg: 'bg-sky-200' }, { e: '🎮', c: '#a78bfa', bg: 'bg-violet-400' }, { e: '🐱', c: '#fed7aa', bg: 'bg-orange-200' },
+      { e: '🐶', c: '#d1d5db', bg: 'bg-gray-300' }, { e: '👽', c: '#86efac', bg: 'bg-green-300' }, { e: '👻', c: '#e2e8f0', bg: 'bg-slate-200' },
+      { e: '🌧️', c: '#9ca3af', bg: 'bg-gray-400' }, { e: '🌈', c: '#f0abfc', bg: 'bg-fuchsia-300' }, { e: '🌙', c: '#fde68a', bg: 'bg-amber-200' }
+    ];
+
+    let jarLogs = JSON.parse(localStorage.getItem('omni_cute_jar_v2')) || {};
     let selectedJarDateKey = todayKey();
-    let currentMood = '😊';
-    let currentMoodColor = 'bg-amber-300';
+    let currentEmojiObj = EMOJI_LIST[0];
     let currentShelfYear = new Date().getFullYear();
     let currentShelfMonth = new Date().getMonth();
     let cameraStream = null;
@@ -957,11 +969,11 @@
           type: 'note',
           text: 'Hôm nay trời mát mẻ, hoàn thành xong mục tiêu đọc bài mới ✨',
           mood: '😊',
-          color: 'bg-amber-300',
+          location: 'Ở nhà',
           time: '08:30'
         }
       ];
-      localStorage.setItem('omni_cute_jar_v1', JSON.stringify(jarLogs));
+      localStorage.setItem('omni_cute_jar_v2', JSON.stringify(jarLogs));
     }
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -973,6 +985,7 @@
       applyFontFamily(currentFontFamily);
       updateSettingsStats();
       initParagraphInputs();
+      renderEmojiKeyboard();
       renderCurrentJar();
       renderMonthlyShelf();
     });
@@ -1030,6 +1043,25 @@
       renderCurrentJar();
     }
 
+    /* ==================== LOGIC BÀN PHÍM EMOJI ==================== */
+    function renderEmojiKeyboard() {
+      const grid = document.getElementById('emojiGrid');
+      grid.innerHTML = EMOJI_LIST.map((item, idx) => `
+        <button onclick="selectEmoji(${idx})" class="text-xl p-1 hover:bg-white/20 rounded-md transition-colors active:scale-90">${item.e}</button>
+      `).join('');
+    }
+
+    function toggleEmojiPicker() {
+      document.getElementById('emojiGrid').classList.toggle('hidden');
+    }
+
+    function selectEmoji(index) {
+      currentEmojiObj = EMOJI_LIST[index];
+      document.getElementById('currentSelectedEmoji').innerText = currentEmojiObj.e;
+      document.getElementById('emojiGrid').classList.add('hidden');
+    }
+
+
     /* ==================== LOGIC LỌ KỶ NIỆM & KỆ LỊCH ==================== */
     function switchJarTab(tab) {
       const todayView = document.getElementById('jarTodayView');
@@ -1054,21 +1086,38 @@
       }
     }
 
-    function selectMood(emoji, colorClass) {
-      currentMood = emoji;
-      currentMoodColor = colorClass;
-      document.querySelectorAll('.mood-btn').forEach(btn => {
-        if (btn.innerText === emoji) {
-          btn.className = "mood-btn w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs scale-110 ring-2 ring-pink-400 transition-all";
-        } else {
-          btn.className = "mood-btn w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs transition-all";
-        }
-      });
-    }
-
     function formatDisplayDate(dateKey) {
       const parts = dateKey.split('-');
-      return `${parseInt(parts[2])} Tháng ${parseInt(parts[1])}`;
+      return `${parseInt(parts[2])} THÁNG ${parseInt(parts[1])}`;
+    }
+
+    function getDominantColor(logsList) {
+      if (!logsList || logsList.length === 0) return 'rgba(255,255,255,0.1)';
+      const lastItem = logsList[logsList.length - 1];
+      const emojiDef = EMOJI_LIST.find(x => x.e === lastItem.mood);
+      return emojiDef ? emojiDef.c : '#fcd34d';
+    }
+
+    function applySeasonalDecor() {
+      const month = new Date().getMonth() + 1;
+      const topDecor = document.getElementById('seasonalDecorTop');
+      const insideDecor = document.getElementById('seasonalDecorInside');
+      
+      topDecor.innerHTML = '';
+      insideDecor.innerHTML = '';
+
+      if (month === 10) {
+        topDecor.innerHTML = '🕸️🕷️';
+        topDecor.className = "absolute -top-4 -right-2 z-20 text-3xl pointer-events-none drop-shadow-md opacity-80";
+        insideDecor.innerHTML = '🦇';
+      } else if (month === 12) {
+        topDecor.innerHTML = '🎅';
+        topDecor.className = "absolute -top-6 left-1/2 -translate-x-1/2 z-20 text-4xl pointer-events-none drop-shadow-md";
+        insideDecor.innerHTML = '❄️❄️';
+      } else if (month === 2) {
+        topDecor.innerHTML = '🌸';
+        topDecor.className = "absolute -top-3 -right-2 z-20 text-3xl pointer-events-none drop-shadow-md opacity-90";
+      }
     }
 
     function renderCurrentJar() {
@@ -1076,44 +1125,50 @@
       const todayList = jarLogs[todayKey()] || [];
 
       document.getElementById('homeJarCount').innerText = todayList.length;
-      document.getElementById('btnJarCount').innerText = list.length;
       document.getElementById('jarTagDate').innerText = formatDisplayDate(selectedJarDateKey);
-      document.getElementById('jarTagCount').innerText = `${list.length} mảnh ký ức`;
-      document.getElementById('jarSelectedDateLabel').innerText = (selectedJarDateKey === todayKey()) ? "Hôm nay ✨" : `Ngày ${formatDisplayDate(selectedJarDateKey)}`;
+      document.getElementById('jarTagCount').innerText = `${list.length} ngôi sao`;
+      document.getElementById('jarSelectedDateLabel').innerText = (selectedJarDateKey === todayKey()) ? "Hôm nay ✨" : `Ngày ${selectedJarDateKey}`;
+
+      const jarEl = document.getElementById('mainGlassJar');
+      const dominantColor = getDominantColor(list);
+      jarEl.style.boxShadow = `inset 0 0 30px ${dominantColor}40, 0 12px 28px rgba(0,0,0,0.5)`;
+      jarEl.style.borderColor = dominantColor;
+
+      applySeasonalDecor();
 
       const container = document.getElementById('jarItemsContainer');
       container.innerHTML = '';
 
       if (list.length === 0) {
-        container.innerHTML = `<div class="text-[10px] text-slate-400/70 italic pb-8">Chiếc lọ đang đợi kỷ niệm đầu tiên...</div>`;
+        container.innerHTML = `<div class="text-[10px] text-slate-400/70 italic pb-8">Lọ trống, hãy thả sao vào...</div>`;
         return;
       }
 
       list.forEach((item, idx) => {
-        const rot = ((idx * 17) % 30) - 15;
-        if (item.type === 'locket') {
-          const thumb = document.createElement('div');
-          thumb.style.setProperty('--rot', `${rot}deg`);
-          thumb.className = "jar-item-anim w-10 h-10 rounded-xl border-2 border-white shadow-md overflow-hidden relative bg-slate-800 shrink-0";
-          thumb.innerHTML = `
-            <img src="${item.photo}" class="w-full h-full object-cover" alt="Locket">
-            <span class="absolute bottom-0 right-0 text-[8px] bg-black/60 px-0.5 rounded">${item.mood || '📸'}</span>
-          `;
-          container.appendChild(thumb);
-        } else {
-          const pill = document.createElement('div');
-          pill.style.setProperty('--rot', `${rot}deg`);
-          pill.className = `jar-item-anim px-2.5 py-1 rounded-full ${item.color || 'bg-pink-300'} text-slate-950 font-bold text-[10px] shadow-sm flex items-center gap-1 max-w-[110px] truncate shrink-0 border border-white/60`;
-          pill.innerHTML = `<span>${item.mood}</span> <span class="truncate">${item.text}</span>`;
-          container.appendChild(pill);
-        }
+        const rot = ((idx * 57) % 60) - 30;
+        const eDef = EMOJI_LIST.find(x => x.e === item.mood) || EMOJI_LIST[0];
+        const isLocket = item.type === 'locket';
+        
+        const star = document.createElement('div');
+        star.style.setProperty('--rot', `${rot}deg`);
+        star.style.color = eDef.c;
+        star.className = `star-anim text-[${isLocket ? '32px' : '24px'}] filter drop-shadow-lg leading-none select-none`;
+        star.innerHTML = `
+          <div class="relative">
+            <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            ${isLocket ? `<span class="absolute -bottom-1 -right-1 text-[8px] bg-black/60 rounded-full px-0.5">📸</span>` : ''}
+          </div>
+        `;
+        container.appendChild(star);
       });
     }
 
     function dropQuickNoteIntoJar() {
       const input = document.getElementById('quickNoteInput');
+      const locInput = document.getElementById('quickNoteLocation');
       const text = input.value.trim();
-      if (!text) return;
+      const location = locInput.value.trim();
+      if (!text && !location) return;
 
       const now = new Date();
       const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
@@ -1122,14 +1177,15 @@
       jarLogs[selectedJarDateKey].push({
         id: 'note_' + Date.now(),
         type: 'note',
-        text: text,
-        mood: currentMood,
-        color: currentMoodColor,
+        text: text || "Chỉ là một khoảnh khắc...",
+        location: location,
+        mood: currentEmojiObj.e,
         time: timeStr
       });
 
-      localStorage.setItem('omni_cute_jar_v1', JSON.stringify(jarLogs));
+      localStorage.setItem('omni_cute_jar_v2', JSON.stringify(jarLogs));
       input.value = '';
+      locInput.value = '';
       renderCurrentJar();
     }
 
@@ -1228,11 +1284,11 @@
 
     function saveLocketToJar() {
       if (!capturedPhotoDataUrl) {
-        alert("Hãy chụp một bức ảnh hoặc chọn ảnh trước khi thả vào lọ nhé!");
+        alert("Hãy chụp hoặc chọn ảnh trước khi biến thành sao nhé!");
         return;
       }
 
-      const caption = document.getElementById('locketCaptionInput').value.trim() || "Khoảnh khắc Locket ✨";
+      const caption = document.getElementById('locketCaptionInput').value.trim();
       const now = new Date();
       const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
 
@@ -1242,56 +1298,75 @@
         type: 'locket',
         photo: capturedPhotoDataUrl,
         text: caption,
-        mood: currentMood,
+        location: "",
+        mood: currentEmojiObj.e,
         time: timeStr
       });
 
-      localStorage.setItem('omni_cute_jar_v1', JSON.stringify(jarLogs));
+      localStorage.setItem('omni_cute_jar_v2', JSON.stringify(jarLogs));
       closeLocketCameraModal();
       renderCurrentJar();
     }
 
     function openDayMemoriesModal() {
       const list = jarLogs[selectedJarDateKey] || [];
-      document.getElementById('modalJarTitleDate').innerText = `Lọ Kỷ Niệm – ${formatDisplayDate(selectedJarDateKey)}`;
+      document.getElementById('modalJarTitleDate').innerText = `Dải Ngân Hà Ngày ${formatDisplayDate(selectedJarDateKey)}`;
       const container = document.getElementById('dayMemoriesList');
       container.innerHTML = '';
 
       if (list.length === 0) {
-        container.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">Chưa có mảnh giấy hay bức ảnh Locket nào trong chiếc lọ này.</div>`;
+        container.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">Chưa có ngôi sao nào rơi xuống đây.</div>`;
       } else {
         list.slice().reverse().forEach(item => {
+          const eDef = EMOJI_LIST.find(x => x.e === item.mood) || EMOJI_LIST[0];
           const card = document.createElement('div');
+          
+          card.className = "relative rounded-3xl overflow-hidden shadow-lg cursor-pointer transition-all active:scale-95";
+          card.onclick = function() { this.classList.add('memory-revealed'); };
+
+          const locHtml = item.location ? `<div class="text-[9px] text-sky-300 font-semibold mb-1 flex items-center gap-1"><i class="ph-fill ph-map-pin"></i> ${item.location}</div>` : '';
+
+          let innerContent = '';
           if (item.type === 'locket') {
-            card.className = "bg-slate-800/90 border border-pink-400/25 rounded-3xl p-3 flex flex-col items-center gap-2 shadow-lg";
-            card.innerHTML = `
-              <div class="w-full flex items-center justify-between text-[10px] text-slate-400 px-1">
-                <span class="font-bold text-pink-300 flex items-center gap-1">${item.mood} Locket Photo</span>
-                <div class="flex items-center gap-2">
+            innerContent = `
+              <div class="bg-slate-800/90 border border-[${eDef.c}]/30 p-3 flex flex-col items-center gap-2">
+                <div class="w-full flex items-center justify-between text-[10px] text-slate-400 px-1">
+                  <span class="font-bold flex items-center gap-1" style="color: ${eDef.c}">${item.mood} Locket Star</span>
                   <span>${item.time}</span>
-                  <button onclick="deleteJarItem('${item.id}')" class="text-rose-400"><i class="ph ph-trash"></i></button>
                 </div>
-              </div>
-              <div class="relative w-56 h-56 rounded-2xl overflow-hidden border border-white/15 shadow-md">
-                <img src="${item.photo}" class="w-full h-full object-cover" alt="Locket">
-                <div class="absolute bottom-2 inset-x-3 bg-black/65 backdrop-blur-md text-white text-center text-xs font-semibold py-1 px-2.5 rounded-full border border-white/10">
-                  ${item.text}
+                ${locHtml}
+                <div class="relative w-full aspect-square max-w-[240px] rounded-2xl overflow-hidden border border-white/15 shadow-md">
+                  <img src="${item.photo}" class="w-full h-full object-cover">
+                  ${item.text ? `<div class="absolute bottom-2 inset-x-3 bg-black/65 backdrop-blur text-white text-center text-xs py-1 px-2.5 rounded-full">${item.text}</div>` : ''}
                 </div>
               </div>
             `;
           } else {
-            card.className = "bg-white/5 border border-white/10 rounded-2xl p-3 flex items-start justify-between gap-2.5";
-            card.innerHTML = `
-              <div class="w-8 h-8 rounded-xl ${item.color || 'bg-amber-300'} text-slate-950 flex items-center justify-center text-base shrink-0 shadow">
-                ${item.mood}
+            innerContent = `
+              <div class="bg-white/5 border border-white/10 p-3.5 flex flex-col gap-1.5">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full text-sm flex items-center justify-center shadow" style="background-color: ${eDef.c}20; color: ${eDef.c}">${item.mood}</div>
+                    <span class="text-[9px] text-slate-400">${item.time}</span>
+                  </div>
+                  <button onclick="event.stopPropagation(); deleteJarItem('${item.id}')" class="text-slate-500 hover:text-rose-400 p-1"><i class="ph ph-trash text-xs"></i></button>
+                </div>
+                ${locHtml}
+                <div class="text-xs text-white leading-relaxed font-medium pl-1">${item.text}</div>
               </div>
-              <div class="flex-1">
-                <div class="text-xs text-white leading-relaxed font-medium">${item.text}</div>
-                <div class="text-[9px] text-slate-400 mt-1">${item.time}</div>
-              </div>
-              <button onclick="deleteJarItem('${item.id}')" class="text-slate-500 hover:text-rose-400 p-1"><i class="ph ph-trash text-xs"></i></button>
             `;
           }
+
+          card.innerHTML = `
+            ${innerContent}
+            <div class="memory-cover absolute inset-0 bg-slate-900/95 flex flex-col items-center justify-center z-10 border border-white/10 rounded-3xl">
+              <div class="animate-bounce mb-2" style="color: ${eDef.c}; text-shadow: 0 0 10px ${eDef.c};">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              </div>
+              <span class="text-[10px] font-bold tracking-widest text-slate-300 uppercase">Chạm để mở sao</span>
+            </div>
+          `;
+          
           container.appendChild(card);
         });
       }
@@ -1306,7 +1381,7 @@
     function deleteJarItem(itemId) {
       if (!jarLogs[selectedJarDateKey]) return;
       jarLogs[selectedJarDateKey] = jarLogs[selectedJarDateKey].filter(x => x.id !== itemId);
-      localStorage.setItem('omni_cute_jar_v1', JSON.stringify(jarLogs));
+      localStorage.setItem('omni_cute_jar_v2', JSON.stringify(jarLogs));
       openDayMemoriesModal();
       renderCurrentJar();
       renderMonthlyShelf();
@@ -1342,10 +1417,11 @@
           const items = jarLogs[dateKey] || [];
           const hasPhoto = items.some(x => x.type === 'locket');
           const isToday = (dateKey === todayKey());
+          const domCol = getDominantColor(items);
 
-          const dotsHtml = items.slice(0, 5).map(it => {
-            const c = it.type === 'locket' ? 'bg-pink-400 ring-1 ring-white' : (it.color || 'bg-amber-300');
-            return `<span class="w-2 h-2 rounded-full ${c}"></span>`;
+          const dotsHtml = items.slice(0, 4).map(it => {
+            const eD = EMOJI_LIST.find(x => x.e === it.mood) || EMOJI_LIST[0];
+            return `<span class="text-[8px] drop-shadow-sm" style="color: ${eD.c}">⭐</span>`;
           }).join('');
 
           const jarEl = document.createElement('div');
@@ -1356,12 +1432,11 @@
           jarEl.className = "flex flex-col items-center cursor-pointer active:scale-90 transition-transform";
           jarEl.innerHTML = `
             <div class="w-5 h-1.5 cork-lid rounded-t-sm"></div>
-            <div class="w-11 h-14 rounded-xl border ${isToday ? 'border-pink-400 bg-pink-500/15' : 'border-white/25 bg-white/5'} p-1 flex flex-col justify-between items-center relative overflow-hidden shadow-sm">
-              <span class="text-[9px] font-black ${isToday ? 'text-pink-300' : 'text-slate-300'}">${d}</span>
+            <div class="w-11 h-14 rounded-xl border p-1 flex flex-col justify-between items-center relative overflow-hidden shadow-sm" 
+                 style="border-color: ${items.length>0 ? domCol : 'rgba(255,255,255,0.2)'}; background-color: ${isToday ? domCol+'20' : 'rgba(255,255,255,0.05)'};">
+              <span class="text-[9px] font-black" style="color: ${isToday ? domCol : '#cbd5e1'}">${d}</span>
               ${hasPhoto ? `<span class="text-[8px]">📸</span>` : ''}
-              <div class="flex flex-wrap justify-center gap-0.5 w-full pb-0.5">
-                ${dotsHtml}
-              </div>
+              <div class="flex flex-wrap justify-center gap-0 w-full pb-0.5">${dotsHtml}</div>
             </div>
           `;
           rowDiv.appendChild(jarEl);
@@ -1736,7 +1811,7 @@
           if (imported.articles) articles = imported.articles;
           if (imported.jarLogs) jarLogs = imported.jarLogs;
           saveArticles();
-          localStorage.setItem('omni_cute_jar_v1', JSON.stringify(jarLogs));
+          localStorage.setItem('omni_cute_jar_v2', JSON.stringify(jarLogs));
           renderTikTokFeed();
           renderCurrentJar();
           alert("Khôi phục toàn bộ bài đọc & Lọ Kỷ Niệm thành công!");
