@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Omni Space - Allin Pro & Locket Jar</title>
+
+  <!-- Cấu hình PWA & iOS Home Screen -->
+  <meta name="theme-color" content="#020617">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Omni Space">
+
+  <!-- Manifest Data URI động -->
+  <link rel="manifest" id="manifestPlaceholder">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { 500: '#10b981', 600: '#059669' }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Phosphor Icons & html2canvas -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Vệt Highlight vàng dạ quang đặc trưng Allin */
+    .allin-hl {
+      background: linear-gradient(120deg, #fef08a 0%, #facc15 100%);
+      color: #0f172a !important;
+      font-weight: 700;
+      padding: 0.12em 0.4em;
+      border-radius: 6px;
+      display: inline;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+      line-height: 1.8;
+      box-shadow: 0 1px 4px rgba(250, 204, 21, 0.25);
+    }
+    .dark .allin-hl {
+      background: linear-gradient(120deg, #fde047 0%, #eab308 100%);
+      color: #020617 !important;
+      box-shadow: 0 1px 6px rgba(234, 179, 8, 0.35);
+    }
+
+    /* TikTok Snap Feed */
+    .snap-feed-container {
+      scroll-snap-type: y mandatory;
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
+      height: 100%;
+    }
+    .snap-card-item {
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+      height: 100%;
+      position: relative;
+    }
+
+    /* Phông chữ đọc bài báo */
+    .font-sans-mode { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .font-serif-mode { font-family: Georgia, Cambria, "Times New Roman", Times, serif; }
+
+    .font-size-sm { font-size: 0.88rem; line-height: 1.75; }
+    .font-size-md { font-size: 0.98rem; line-height: 1.88; }
+    .font-size-lg { font-size: 1.12rem; line-height: 2.05; }
+
+    /* Hiệu ứng chuyển cảnh */
+    .app-screen {
+      transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease;
+    }
+    .app-closed {
+      transform: scale(0.94) translateY(24px);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .app-open {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Thiết kế Lọ Thủy Tinh */
+    .glass-jar {
+      background: linear-gradient(135deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.04) 100%);
+      border: 2.5px solid rgba(255, 255, 255, 0.28);
+      box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.12), 0 12px 28px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(6px);
+    }
+    .cork-lid {
+      background: linear-gradient(90deg, #b45309 0%, #d97706 50%, #92400e 100%);
+      border-bottom: 3px solid #78350f;
+    }
+
+    @keyframes dropInJar {
+      0% { transform: translateY(-90px) scale(0.5) rotate(0deg); opacity: 0; }
+      70% { transform: translateY(6px) scale(1.08) rotate(12deg); opacity: 1; }
+      100% { transform: translateY(0) scale(1) rotate(var(--rot, 6deg)); opacity: 1; }
+    }
+    .jar-item-anim {
+      animation: dropInJar 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    .wooden-shelf-row {
+      border-bottom: 8px solid #451a03;
+      box-shadow: 0 6px 10px rgba(0,0,0,0.4);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(120,53,15,0.18) 100%);
+    }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 antialiased select-none overflow-hidden font-sans-mode">
+
+  <!-- KHUNG HIỂN THỊ CHÍNH -->
+  <div class="relative w-full h-full max-w-md mx-auto flex flex-col justify-between overflow-hidden bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950">
+
+    <!-- ==================== 1. LAUNCHER (MÀN HÌNH CHÍNH) ==================== -->
+    <div id="homeScreen" class="w-full h-full flex flex-col justify-between p-4 pb-5 overflow-y-auto no-scrollbar">
+      
+      <!-- Top Widget: Đồng hồ, Lời chào & Streak -->
+      <div class="mt-2 flex flex-col gap-3">
+        <div class="flex items-center justify-between text-xs px-1 text-slate-400">
+          <span id="liveGreeting" class="font-medium text-emerald-400 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Chào bạn
+          </span>
+          <div class="flex items-center gap-2">
+            <!-- Nút thêm vào màn hình chính -->
+            <button id="pwaHeaderInstallBtn" onclick="triggerPwaInstallPrompt()" class="hidden px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-semibold items-center gap-1 active:scale-95">
+              <i class="ph ph-download-simple"></i> Cài Đặt App
+            </button>
+            <span id="liveDate">Hôm nay</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2.5">
+          <div class="col-span-2 bg-white/5 border border-white/10 rounded-2xl p-3.5 flex flex-col justify-center backdrop-blur-sm">
+            <div id="liveClock" class="text-3xl font-black tracking-tight text-white leading-tight">19:00</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Lưu giữ tri thức & khoảnh khắc</div>
+          </div>
+          <div class="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-2.5 flex flex-col items-center justify-center backdrop-blur-sm">
+            <span class="text-xl">🔥</span>
+            <div class="text-base font-black text-amber-400 leading-tight mt-0.5"><span id="streakCount">1</span> Ngày</div>
+            <div class="text-[9px] text-amber-300/70 font-semibold uppercase tracking-wider">Chuỗi ngày</div>
+          </div>
+        </div>
+
+        <!-- Banner mời thêm vào màn hình chính (PWA Card) -->
+        <div id="pwaInstallBanner" class="bg-gradient-to-r from-emerald-500/20 via-teal-500/15 to-cyan-500/20 border border-emerald-400/30 rounded-2xl p-2.5 flex items-center justify-between shadow-md">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/30 border border-emerald-400/40 flex items-center justify-center text-emerald-300 text-base">
+              <i class="ph ph-app-window"></i>
+            </div>
+            <div>
+              <div class="text-xs font-bold text-white leading-tight">Thêm Vào Màn Hình Chính</div>
+              <div class="text-[10px] text-emerald-200/70">Mở app nhanh toàn màn hình không che link</div>
+            </div>
+          </div>
+          <button onclick="triggerPwaInstallPrompt()" class="px-3 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-black text-[11px] active:scale-95 shadow">
+            Cài Ngay
+          </button>
+        </div>
+
+        <!-- Ô Tìm Kiếm -->
+        <div class="relative mt-0.5">
+          <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <input type="text" id="appSearchInput" oninput="filterApps()" placeholder="Tìm kiếm ứng dụng..." 
+            class="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500/50">
+        </div>
+
+        <!-- Bộ lọc tab -->
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[11px]">
+          <button onclick="setAppFilter('all')" class="cat-pill px-2.5 py-1 rounded-lg bg-white/15 text-white font-medium">Tất cả</button>
+          <button onclick="setAppFilter('study')" class="cat-pill px-2.5 py-1 rounded-lg bg-white/5 text-slate-400">Đọc & Nhật ký</button>
+          <button onclick="setAppFilter('tools')" class="cat-pill px-2.5 py-1 rounded-lg bg-white/5 text-slate-400">Hệ thống</button>
+        </div>
+      </div>
+
+      <!-- Grid Ứng Dụng -->
+      <div id="appGrid" class="grid grid-cols-4 gap-y-5 gap-x-2 my-auto py-4 px-1">
+        <!-- Khám Phá Reels -->
+        <div class="app-item flex flex-col items-center gap-1.5 cursor-pointer active:scale-90 transition-transform" data-cat="study" onclick="openApp('reader')">
+          <div class="relative w-14 h-14 p-3 rounded-2xl bg-gradient-to-tr from-rose-500 via-red-500 to-amber-500 flex items-center justify-center text-white text-2xl shadow-lg border border-white/20">
+            <i class="ph ph-play"></i>
+            <span class="absolute -top-1 -right-1 bg-cyan-400 text-[7px] font-black px-1 py-0.5 rounded-full text-slate-950">REELS</span>
+          </div>
+          <span class="text-[11px] font-medium text-slate-200 tracking-tight text-center">Khám Phá</span>
+        </div>
+
+        <!-- Lọ Kỷ Niệm (Locket & Note Jar) -->
+        <div class="app-item flex flex-col items-center gap-1.5 cursor-pointer active:scale-90 transition-transform" data-cat="study" onclick="openApp('jar')">
+          <div class="relative w-14 h-14 p-3 rounded-2xl bg-gradient-to-tr from-pink-500 via-fuchsia-500 to-amber-300 flex items-center justify-center text-white text-2xl shadow-lg border border-white/20">
+            <i class="ph ph-jar"></i>
+            <span class="absolute -top-1 -right-1 bg-yellow-300 text-[7px] font-black px-1 py-0.5 rounded-full text-slate-950">CUTE</span>
+          </div>
+          <span class="text-[11px] font-medium text-pink-200 tracking-tight text-center">Lọ Kỷ Niệm</span>
+        </div>
+
+        <!-- Soạn Bài -->
+        <div class="app-item flex flex-col items-center gap-1.5 cursor-pointer active:scale-90 transition-transform" data-cat="study" onclick="openCreateModal()">
+          <div class="relative w-14 h-14 p-3 rounded-2xl bg-gradient-to-tr from-indigo-600 to-blue-500 flex items-center justify-center text-white text-2xl shadow-lg border border-white/20">
+            <i class="ph ph-pencil-line"></i>
+            <span class="absolute -top-1 -right-1 bg-emerald-400 text-[7px] font-black px-1 py-0.5 rounded-full text-slate-950">AI</span>
+          </div>
+          <span class="text-[11px] font-medium text-slate-200 tracking-tight text-center">Soạn Bài</span>
+        </div>
+
+        <!-- Cài Đặt -->
+        <div class="app-item flex flex-col items-center gap-1.5 cursor-pointer active:scale-90 transition-transform" data-cat="tools" onclick="openApp('settings')">
+          <div class="w-14 h-14 p-3 rounded-2xl bg-gradient-to-tr from-slate-700 to-slate-500 flex items-center justify-center text-white text-2xl shadow-lg border border-white/20">
+            <i class="ph ph-gear-six"></i>
+          </div>
+          <span class="text-[11px] font-medium text-slate-200 tracking-tight text-center">Cài Đặt</span>
+        </div>
+      </div>
+
+      <!-- Widget Nhắc Nhở Nhỏ Của Lọ Kỷ Niệm Hôm Nay -->
+      <div onclick="openApp('jar')" class="mb-3 bg-gradient-to-r from-pink-500/15 via-purple-500/15 to-amber-500/15 border border-pink-400/25 rounded-2xl p-3 flex items-center justify-between cursor-pointer active:scale-98 transition-all">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-xl bg-pink-500/20 border border-pink-400/30 flex items-center justify-center text-lg">🫙</div>
+          <div>
+            <div class="text-xs font-bold text-pink-200">Lọ Hôm Nay (<span id="homeJarCount">0</span> khoảnh khắc)</div>
+            <div class="text-[10px] text-slate-400">Chạm để chụp Locket hoặc thả note nhỏ ✨</div>
+          </div>
+        </div>
+        <i class="ph ph-caret-right text-pink-300"></i>
+      </div>
+
+      <!-- Dock Bar -->
+      <div class="bg-white/10 border border-white/10 rounded-2xl p-2 px-5 flex items-center justify-around backdrop-blur-md">
+        <button onclick="openApp('reader')" class="p-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 text-white text-xl active:scale-90 shadow-md"><i class="ph ph-play"></i></button>
+        <button onclick="openApp('jar')" class="p-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white text-xl active:scale-90 shadow-md"><i class="ph ph-camera"></i></button>
+        <button onclick="openCreateModal()" class="p-2.5 rounded-xl bg-indigo-500 text-white text-xl active:scale-90 shadow-md"><i class="ph ph-plus"></i></button>
+        <button onclick="openApp('settings')" class="p-2.5 rounded-xl bg-slate-700 text-white text-xl active:scale-90 shadow-md"><i class="ph ph-gear"></i></button>
+      </div>
+    </div>
+
+
+    <!-- ==================== 2. APP LỌ KỶ NIỆM & LOCKET (CUTE JAR DIARY) ==================== -->
+    <div id="jarApp" class="app-screen app-closed absolute inset-0 z-30 bg-gradient-to-b from-slate-950 via-purple-950/60 to-slate-950 flex flex-col justify-between overflow-hidden">
+      
+      <!-- Header App Lọ Kỷ Niệm -->
+      <div class="px-3.5 pt-3 pb-2.5 flex items-center justify-between border-b border-white/10 bg-slate-900/80 backdrop-blur-md z-20">
+        <div class="flex items-center gap-2">
+          <button onclick="closeCurrentApp()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-200 active:scale-90">
+            <i class="ph ph-caret-left text-lg"></i>
+          </button>
+          <div>
+            <h2 class="text-xs font-black tracking-wide text-pink-300 flex items-center gap-1">
+              🫙 LỌ KỶ NIỆM LOCKET
+            </h2>
+            <div id="jarSelectedDateLabel" class="text-[10px] text-slate-400">Hôm nay</div>
+          </div>
+        </div>
+
+        <div class="flex items-center bg-black/40 p-1 rounded-xl border border-white/10 text-[11px]">
+          <button onclick="switchJarTab('today')" id="jarTabTodayBtn" class="px-2.5 py-1 rounded-lg bg-pink-500 text-white font-bold transition-all">Lọ Ngày</button>
+          <button onclick="switchJarTab('shelf')" id="jarTabShelfBtn" class="px-2.5 py-1 rounded-lg text-slate-300 font-medium transition-all">Kệ Tháng</button>
+        </div>
+      </div>
+
+      <!-- TAB 1: CHIẾC LỌ TRONG NGÀY -->
+      <div id="jarTodayView" class="flex-1 flex flex-col justify-between p-4 overflow-y-auto no-scrollbar">
+        <div class="my-auto flex flex-col items-center justify-center py-2">
+          <div class="w-24 h-5 cork-lid rounded-t-lg shadow-md z-10"></div>
+          <div class="w-28 h-3 bg-white/20 border-x-2 border-t-2 border-white/30 rounded-t-sm"></div>
+          
+          <div onclick="openDayMemoriesModal()" class="relative w-52 h-64 glass-jar rounded-3xl p-3 flex flex-col justify-end items-center cursor-pointer active:scale-95 transition-transform overflow-hidden group">
+            <div class="absolute top-3 left-3 w-2.5 h-44 bg-white/15 rounded-full blur-[1px] pointer-events-none"></div>
+            <div class="absolute top-4 right-3.5 w-1 h-20 bg-white/10 rounded-full pointer-events-none"></div>
+
+            <div class="absolute top-5 inset-x-6 bg-amber-50/90 text-slate-900 rounded-xl px-2.5 py-1.5 text-center shadow-md border border-amber-200/60 pointer-events-none">
+              <div id="jarTagDate" class="text-[10px] font-black uppercase tracking-wider text-amber-900">16 THÁNG 10</div>
+              <div id="jarTagCount" class="text-[9px] font-semibold text-slate-600">0 mảnh ký ức</div>
+            </div>
+
+            <div id="jarItemsContainer" class="w-full flex flex-wrap-reverse items-center justify-center gap-1.5 pt-16 pb-1 max-h-44 overflow-hidden"></div>
+
+            <div class="mt-1 text-[9px] text-pink-200/80 font-semibold group-hover:text-white flex items-center gap-1">
+              <i class="ph ph-sparkle"></i> Chạm vào lọ để khui kỷ niệm
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900/90 border border-white/10 rounded-2xl p-3 space-y-2.5 shadow-xl backdrop-blur-md">
+          <div class="flex items-center justify-between text-xs px-1">
+            <span class="text-[10px] font-bold text-slate-400 uppercase">Cảm xúc lúc này:</span>
+            <div class="flex items-center gap-1.5" id="moodSelector">
+              <button onclick="selectMood('😊', 'bg-amber-300')" class="mood-btn w-6 h-6 rounded-full bg-white/15 flex items-center justify-center text-xs scale-110 ring-2 ring-pink-400">😊</button>
+              <button onclick="selectMood('🥰', 'bg-pink-300')" class="mood-btn w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs">🥰</button>
+              <button onclick="selectMood('✨', 'bg-cyan-300')" class="mood-btn w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs">✨</button>
+              <button onclick="selectMood('🌿', 'bg-emerald-300')" class="mood-btn w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs">🌿</button>
+              <button onclick="selectMood('💤', 'bg-indigo-300')" class="mood-btn w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs">💤</button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <input type="text" id="quickNoteInput" placeholder="Viết một điều nhỏ xíu dễ thương..." 
+              class="flex-1 bg-slate-800/90 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-pink-400">
+            <button onclick="dropQuickNoteIntoJar()" class="px-3 py-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold text-xs flex items-center gap-1 active:scale-90 shadow-md">
+              <i class="ph ph-paper-plane-tilt"></i> Thả
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-0.5">
+            <button onclick="openLocketCameraModal()" class="py-2 rounded-xl bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95">
+              <i class="ph-fill ph-camera text-sm"></i> Chụp ảnh Locket
+            </button>
+            <button onclick="openDayMemoriesModal()" class="py-2 rounded-xl bg-white/10 border border-white/10 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 active:scale-95">
+              <i class="ph ph-cards text-sm"></i> Mở lọ xem (<span id="btnJarCount">0</span>)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: KỆ LỊCH THÁNG -->
+      <div id="jarShelfView" class="flex-1 hidden flex-col justify-between p-4 overflow-y-auto no-scrollbar">
+        <div>
+          <div class="flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl p-2.5 mb-4">
+            <button onclick="changeShelfMonth(-1)" class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white active:scale-90">
+              <i class="ph ph-caret-left"></i>
+            </button>
+            <div class="text-center">
+              <div id="shelfMonthTitle" class="text-xs font-black text-amber-300 uppercase tracking-wider">THÁNG 10 / 2026</div>
+              <div class="text-[10px] text-slate-400">Mỗi ngày là một chiếc lọ nhỏ trên kệ</div>
+            </div>
+            <button onclick="changeShelfMonth(1)" class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white active:scale-90">
+              <i class="ph ph-caret-right"></i>
+            </button>
+          </div>
+          <div id="monthlyShelfGrid" class="space-y-4 pb-6"></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==================== MODAL CHỤP ẢNH LOCKET ==================== -->
+    <div id="locketCameraModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
+      <div class="w-full max-w-xs bg-slate-900 border border-pink-500/30 rounded-3xl p-4 flex flex-col items-center gap-3 shadow-2xl relative">
+        <button onclick="closeLocketCameraModal()" class="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-white/10 text-slate-300 flex items-center justify-center">
+          <i class="ph ph-x"></i>
+        </button>
+
+        <div class="text-xs font-black text-pink-300 tracking-wider uppercase flex items-center gap-1">
+          <i class="ph-fill ph-camera"></i> LOCKET MOMENT
+        </div>
+
+        <div class="relative w-60 h-60 rounded-3xl overflow-hidden bg-slate-950 border-2 border-pink-400/40 shadow-inner flex items-center justify-center">
+          <video id="locketVideo" autoplay playsinline class="w-full h-full object-cover hidden"></video>
+          <img id="locketPreviewImg" class="w-full h-full object-cover hidden" alt="Locket Preview">
+          
+          <div id="locketPlaceholder" class="flex flex-col items-center justify-center text-center p-4 text-slate-400">
+            <i class="ph ph-camera-plus text-4xl text-pink-400 mb-2"></i>
+            <span class="text-[11px]">Bật Camera hoặc chọn ảnh từ thư viện để đóng gói vào lọ</span>
+          </div>
+
+          <div class="absolute bottom-2.5 inset-x-3">
+            <input type="text" id="locketCaptionInput" placeholder="Thêm lời nhắn trên ảnh..." 
+              class="w-full bg-black/60 backdrop-blur-md text-white text-center text-xs font-medium py-1.5 px-3 rounded-full border border-white/15 focus:outline-none focus:border-pink-400">
+          </div>
+        </div>
+
+        <div class="w-full flex items-center justify-center gap-2.5 pt-1">
+          <button onclick="startCameraStream()" id="btnStartCam" class="flex-1 py-2 rounded-xl bg-white/10 text-white text-xs font-semibold flex items-center justify-center gap-1 active:scale-95">
+            <i class="ph ph-video-camera"></i> Mở Cam
+          </button>
+          <button onclick="captureLocketPhoto()" id="btnCaptureCam" class="hidden flex-1 py-2 rounded-xl bg-rose-500 text-white text-xs font-bold flex items-center justify-center gap-1 active:scale-95">
+            <i class="ph-fill ph-circle"></i> Chụp ngay
+          </button>
+          <label class="flex-1 py-2 rounded-xl bg-white/10 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1 cursor-pointer active:scale-95 text-center">
+            <i class="ph ph-image"></i> Chọn ảnh
+            <input type="file" accept="image/*" onchange="handleLocketFileUpload(event)" class="hidden">
+          </label>
+        </div>
+
+        <button onclick="saveLocketToJar()" class="w-full py-2.5 rounded-2xl bg-gradient-to-r from-pink-500 to-amber-500 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 shadow-lg active:scale-95">
+          <i class="ph-fill ph-sparkle"></i> Bỏ ảnh Locket vào lọ hôm nay
+        </button>
+      </div>
+    </div>
+
+
+    <!-- ==================== MODAL KHUI LỌ XEM KỶ NIỆM ==================== -->
+    <div id="dayMemoriesModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex flex-col justify-end">
+      <div class="w-full max-w-md mx-auto bg-slate-900 border-t border-pink-400/30 rounded-t-3xl max-h-[82vh] flex flex-col p-4 shadow-2xl">
+        <div class="flex items-center justify-between pb-3 border-b border-white/10">
+          <div class="flex items-center gap-2">
+            <span class="text-xl">🫙</span>
+            <div>
+              <h3 id="modalJarTitleDate" class="text-sm font-black text-white">Kỷ Niệm Ngày 16/10</h3>
+              <p class="text-[10px] text-pink-300">Tất cả khoảnh khắc Locket & Note nhỏ đã gom lại</p>
+            </div>
+          </div>
+          <button onclick="closeDayMemoriesModal()" class="w-8 h-8 rounded-full bg-white/10 text-slate-300 flex items-center justify-center">
+            <i class="ph ph-x"></i>
+          </button>
+        </div>
+        <div id="dayMemoriesList" class="flex-1 overflow-y-auto py-3 space-y-3 no-scrollbar"></div>
+      </div>
+    </div>
+
+
+    <!-- ==================== 3. APP FEED KHÁM PHÁ KIỂU TIKTOK ==================== -->
+    <div id="readerApp" class="app-screen app-closed absolute inset-0 z-30 bg-black flex flex-col justify-between overflow-hidden">
+      <div class="absolute top-0 left-0 right-0 z-30 px-3 pt-3 pb-2 flex items-center justify-between bg-gradient-to-b from-black/85 via-black/40 to-transparent">
+        <div class="flex items-center gap-2">
+          <button onclick="closeCurrentApp()" class="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-slate-200 active:scale-90">
+            <i class="ph ph-caret-left text-lg"></i>
+          </button>
+          <span class="text-xs font-black tracking-wider text-rose-400 flex items-center gap-1">
+            <i class="ph ph-sparkle text-amber-300"></i> FEED KHÁM PHÁ
+          </span>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <button onclick="openLibraryDrawer()" class="px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[11px] font-semibold text-slate-200 flex items-center gap-1 active:scale-95">
+            <i class="ph ph-bookmarks"></i> Đã lưu (<span id="savedBadgeCount">0</span>)
+          </button>
+          <button onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-amber-300 text-sm active:scale-90">
+            <i id="themeIcon" class="ph ph-moon"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="tiktokFeedContainer" class="snap-feed-container w-full h-full no-scrollbar"></div>
+    </div>
+
+
+    <!-- ==================== 4. GIAO DIỆN ĐỌC BÁO CHI TIẾT ==================== -->
+    <div id="articleDetailModal" class="fixed inset-0 z-50 bg-slate-950 flex flex-col justify-between transition-transform duration-300 translate-y-full">
+      <div class="w-full h-1 bg-white/10">
+        <div id="readingProgressBar" class="h-full bg-emerald-400 transition-all duration-150" style="width: 0%;"></div>
+      </div>
+
+      <div class="px-3 py-2.5 border-b border-white/10 bg-slate-900/95 backdrop-blur flex items-center justify-between z-10">
+        <button onclick="closeArticleDetail()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white active:scale-90">
+          <i class="ph ph-arrow-left text-base"></i>
+        </button>
+        
+        <div class="flex items-center gap-1.5">
+          <button onclick="toggleSpeechArticle()" id="ttsBtn" class="px-2 py-1 rounded-lg bg-white/10 text-slate-200 text-xs font-semibold flex items-center gap-1 active:scale-95">
+            <i class="ph ph-speaker-high"></i> <span id="ttsBtnText">Nghe</span>
+          </button>
+          <button onclick="generateStoryCardFromDetail()" class="px-2.5 py-1 rounded-lg bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[11px] font-bold flex items-center gap-1 active:scale-95">
+            <i class="ph ph-instagram-logo"></i> Story
+          </button>
+          <button onclick="toggleFavoriteCurrent()" id="detailHeartBtn" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-rose-400 text-base active:scale-90">
+            <i class="ph ph-heart"></i>
+          </button>
+        </div>
+      </div>
+
+      <div id="articleScrollArea" onscroll="updateReadingProgress()" class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span id="dtTopic" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/20 text-emerald-400 tracking-wider">#KHOA_HOC</span>
+            <span class="text-[11px] text-slate-400" id="dtParagraphCount">0 đoạn văn</span>
+          </div>
+          <h1 id="dtTitle" class="text-xl font-black text-white leading-tight">Tiêu đề bài báo</h1>
+          <div class="text-[11px] text-slate-400 pb-2 border-b border-white/10 flex items-center justify-between">
+            <span class="flex items-center gap-1"><i class="ph ph-newspaper-clipping"></i> Allin News Pro</span>
+            <span id="dtDate">Hôm nay</span>
+          </div>
+        </div>
+
+        <div class="w-full h-32 rounded-2xl bg-gradient-to-tr from-indigo-900 via-purple-900 to-slate-900 border border-white/10 flex flex-col justify-end p-3.5 relative overflow-hidden shadow-inner">
+          <i class="ph ph-newspaper text-6xl text-white/10 absolute right-2 top-2"></i>
+          <span class="text-[10px] uppercase font-bold tracking-widest text-amber-300">TỔNG HỢP & PHÂN TÍCH</span>
+          <span class="text-xs text-white/90 font-medium">Bản chi tiết đầy đủ – Tự do mở rộng</span>
+        </div>
+
+        <div id="dtBodyParagraphs" class="space-y-3.5 text-slate-200 font-normal leading-relaxed font-size-md"></div>
+
+        <div class="p-4 rounded-2xl bg-white/5 border border-white/10 text-center space-y-2.5 mt-6">
+          <div class="text-xs text-slate-400">Bạn đã hoàn thành bài viết này!</div>
+          <div class="flex items-center justify-center gap-2">
+            <button onclick="copyArticleShareText()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs inline-flex items-center gap-1 active:scale-95">
+              <i class="ph ph-share-network"></i> Chia sẻ
+            </button>
+            <button onclick="archiveAndNext()" class="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs inline-flex items-center gap-1 active:scale-95 shadow-md">
+              <i class="ph ph-check-circle"></i> Đã đọc & Quay lại feed
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==================== 5. APP CÀI ĐẶT TOÀN DIỆN ==================== -->
+    <div id="settingsApp" class="app-screen app-closed absolute inset-0 z-30 bg-slate-950 flex flex-col">
+      <div class="px-3 py-2.5 flex items-center justify-between border-b border-white/10 bg-slate-900">
+        <div class="flex items-center gap-2">
+          <button onclick="closeCurrentApp()" class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-slate-200">
+            <i class="ph ph-caret-left text-base"></i>
+          </button>
+          <span class="font-bold text-sm text-white">Cài Đặt Hệ Thống</span>
+        </div>
+      </div>
+      
+      <div class="flex-1 p-3.5 space-y-4 overflow-y-auto no-scrollbar text-xs">
+        
+        <!-- Mục PWA trong Cài Đặt -->
+        <div class="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent border border-emerald-500/30 rounded-2xl p-3.5">
+          <div class="flex items-center gap-2 font-bold text-emerald-400 mb-1.5">
+            <i class="ph ph-download-simple text-base"></i> Cài Đặt Lên Màn Hình Chính
+          </div>
+          <p class="text-[11px] text-slate-300 mb-3">Tận hưởng trải nghiệm độc lập, mượt mà và toàn màn hình như ứng dụng gốc.</p>
+          <button onclick="triggerPwaInstallPrompt()" class="w-full py-2 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 active:scale-95 shadow">
+            <i class="ph-fill ph-plus-circle"></i> Thêm vào Màn Hình Chính Ngay
+          </button>
+        </div>
+
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5">
+          <div class="flex items-center gap-2 font-bold text-emerald-400 mb-2">
+            <i class="ph ph-text-aa text-base"></i> Kiểu Chữ & Trải Nghiệm Đọc
+          </div>
+          <div class="space-y-3">
+            <div>
+              <div class="text-[11px] text-slate-300 font-semibold mb-1">Cỡ chữ bài báo</div>
+              <div class="grid grid-cols-3 gap-2">
+                <button onclick="setFontSize('sm')" id="fontSmBtn" class="py-1.5 rounded-lg border border-white/10 text-[11px] text-slate-300">Nhỏ</button>
+                <button onclick="setFontSize('md')" id="fontMdBtn" class="py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-300 font-bold text-[11px]">Vừa</button>
+                <button onclick="setFontSize('lg')" id="fontLgBtn" class="py-1.5 rounded-lg border border-white/10 text-[11px] text-slate-300">Lớn</button>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-white/5 flex items-center justify-between">
+              <span class="text-[11px] text-slate-300 font-semibold">Phông chữ</span>
+              <div class="flex items-center gap-1.5">
+                <button onclick="setFontFamily('sans')" id="fontSansBtn" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500 text-emerald-300 font-bold text-[11px]">Sans Hiện Đại</button>
+                <button onclick="setFontFamily('serif')" id="fontSerifBtn" class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-[11px]">Serif Báo Chí</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5">
+          <div class="flex items-center gap-2 font-bold text-amber-400 mb-2.5">
+            <i class="ph ph-chart-bar text-base"></i> Thống Kê Hoạt Động
+          </div>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="p-2 rounded-xl bg-black/30 border border-white/5">
+              <div id="statTotalArticles" class="text-base font-extrabold text-white">0</div>
+              <div class="text-[9px] text-slate-400 mt-0.5">Tổng bài</div>
+            </div>
+            <div class="p-2 rounded-xl bg-black/30 border border-white/5">
+              <div id="statReadArticles" class="text-base font-extrabold text-emerald-400">0</div>
+              <div class="text-[9px] text-slate-400 mt-0.5">Đã đọc xong</div>
+            </div>
+            <div class="p-2 rounded-xl bg-black/30 border border-white/5">
+              <div id="statStreakDays" class="text-base font-extrabold text-amber-400">1</div>
+              <div class="text-[9px] text-slate-400 mt-0.5">Chuỗi ngày 🔥</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5">
+          <div class="flex items-center gap-2 font-bold text-indigo-400 mb-2">
+            <i class="ph ph-floppy-disk-back text-base"></i> Sao Lưu & Đồng Bộ
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="exportBackupData()" class="py-2 rounded-xl bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 font-bold text-xs flex items-center justify-center gap-1 active:scale-95">
+              <i class="ph ph-export"></i> Xuất File JSON
+            </button>
+            <label class="py-2 rounded-xl bg-white/10 border border-white/15 text-slate-200 font-bold text-xs flex items-center justify-center gap-1 active:scale-95 cursor-pointer text-center">
+              <i class="ph ph-import"></i> Nạp File JSON
+              <input type="file" id="importFileInput" onchange="importBackupData(event)" accept=".json" class="hidden">
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==================== MODAL SOẠN BÀI MỚI & PROMPT AI ==================== -->
+    <div id="createModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+      <div class="w-full max-w-sm bg-slate-900 border border-white/15 rounded-2xl p-4 shadow-2xl relative max-h-[92vh] overflow-y-auto no-scrollbar flex flex-col justify-between">
+        <div>
+          <button onclick="closeCreateModal()" class="absolute top-3.5 right-3.5 text-slate-400 text-base">
+            <i class="ph ph-x"></i>
+          </button>
+
+          <div class="flex items-center justify-between mb-2 pr-6">
+            <div class="flex items-center gap-2">
+              <div class="w-6 h-6 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm">
+                <i class="ph ph-pencil-simple-line"></i>
+              </div>
+              <h2 class="font-bold text-white text-sm">Soạn Bài Viết Mới</h2>
+            </div>
+            <button onclick="openPromptModal()" class="px-2.5 py-1 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[10px] font-bold flex items-center gap-1 shadow-sm active:scale-95">
+              <i class="ph ph-sparkle text-amber-300"></i> Prompt AI
+            </button>
+          </div>
+
+          <div class="flex items-center gap-1 bg-white/5 p-1 rounded-xl mb-3 text-[11px]">
+            <button onclick="switchInputMode('manual')" id="modeManualBtn" class="flex-1 py-1 rounded-lg bg-indigo-600 text-white font-bold transition-all">Từng đoạn</button>
+            <button onclick="switchInputMode('raw')" id="modeRawBtn" class="flex-1 py-1 rounded-lg text-slate-400 font-medium transition-all">Dán nguyên bài tự tách</button>
+          </div>
+
+          <div class="mb-2.5">
+            <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">Tiêu đề bài</label>
+            <input type="text" id="manualTitle" placeholder="Ví dụ: Bí mật loài sứa bất tử..." 
+              class="w-full bg-slate-800 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+          </div>
+
+          <div class="mb-2.5">
+            <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">Chủ đề (Tag)</label>
+            <input type="text" id="manualTopic" placeholder="Ví dụ: #KHOA_HOC, #TAM_LY..." 
+              class="w-full bg-slate-800 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
+          </div>
+
+          <div id="manualSection" class="mb-3">
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-[10px] font-bold text-slate-300 uppercase">Nội dung các đoạn</label>
+              <button onclick="fillSampleTemplate()" class="text-[10px] text-indigo-400 hover:underline">Dán mẫu thử</button>
+            </div>
+            <div id="paragraphsInputsContainer" class="space-y-2"></div>
+            <button onclick="addParagraphField()" type="button" class="mt-2 w-full py-1.5 rounded-lg border border-dashed border-indigo-500/40 text-indigo-300 hover:bg-indigo-500/10 text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition-all">
+              <i class="ph ph-plus-circle"></i> Thêm đoạn tiếp theo
+            </button>
+          </div>
+
+          <div id="rawSection" class="mb-3 hidden">
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-[10px] font-bold text-slate-300 uppercase">Dán toàn bộ bài thô vào đây</label>
+              <button onclick="autoHighlightRawText()" class="text-[10px] text-amber-300 hover:underline flex items-center gap-0.5">
+                <i class="ph ph-magic-wand"></i> Gợi ý Highlight
+              </button>
+            </div>
+            <textarea id="rawTextInput" rows="6" placeholder="Dán nội dung bất kỳ tại đây..." 
+              class="w-full bg-slate-800 border border-white/10 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 leading-relaxed"></textarea>
+          </div>
+        </div>
+
+        <button onclick="saveManualArticle()" class="w-full mt-3 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-95">
+          <i class="ph ph-check"></i> Lưu vào Feed đọc
+        </button>
+      </div>
+    </div>
+
+
+    <!-- ==================== MODAL MẪU PROMPT AI ==================== -->
+    <div id="aiPromptModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4">
+      <div class="w-full max-w-sm bg-slate-900 border border-purple-500/30 rounded-2xl p-4 shadow-2xl relative max-h-[92vh] overflow-y-auto no-scrollbar flex flex-col justify-between">
+        <button onclick="closePromptModal()" class="absolute top-3.5 right-3.5 text-slate-400 hover:text-white">
+          <i class="ph ph-x"></i>
+        </button>
+
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-6 h-6 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center text-sm">
+              <i class="ph ph-robot"></i>
+            </div>
+            <h2 class="font-bold text-white text-sm">Mẫu Lệnh Gửi AI Tìm Tin</h2>
+          </div>
+
+          <div class="mb-2.5">
+            <label class="block text-[10px] font-bold text-slate-300 uppercase mb-1">Chủ đề cần tìm:</label>
+            <input type="text" id="aiTopicInput" oninput="updateAiPromptPreview()" placeholder="Ví dụ: Hiệu ứng cánh bướm, Hố đen vũ trụ..." 
+              class="w-full bg-slate-800 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
+          </div>
+
+          <div class="mb-3">
+            <pre id="promptPreviewText" class="w-full max-h-48 overflow-y-auto bg-slate-950 border border-white/10 rounded-xl p-3 text-[11px] text-slate-300 leading-relaxed font-mono whitespace-pre-wrap select-text"></pre>
+          </div>
+        </div>
+
+        <div class="space-y-2 pt-2 border-t border-white/10">
+          <button id="copyPromptBtn" onclick="copyAiPromptToClipboard()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all">
+            <i class="ph ph-copy"></i> Sao chép Prompt cho AI
+          </button>
+          <div id="copyToast" class="hidden text-center text-[10px] text-emerald-400 font-semibold animate-pulse">
+            ✓ Đã sao chép!
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==================== MODAL MỤC LỤC & STORY ==================== -->
+    <div id="libraryDrawer" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex flex-col justify-end">
+      <div class="w-full max-w-md mx-auto bg-slate-900 border-t border-white/15 rounded-t-2xl max-h-[75vh] flex flex-col p-3">
+        <div class="flex items-center justify-between pb-2.5 border-b border-white/10">
+          <div class="flex items-center gap-1.5">
+            <button onclick="switchLibTab('explore')" id="tabExploreBtn" class="px-2.5 py-1 rounded-lg bg-emerald-500 text-slate-950 font-bold text-xs">
+              Đang trên Feed (<span id="exploreCount">0</span>)
+            </button>
+            <button onclick="switchLibTab('archived')" id="tabArchivedBtn" class="px-2.5 py-1 rounded-lg bg-white/10 text-slate-300 font-semibold text-xs">
+              Đã đọc (<span id="archivedCount">0</span>)
+            </button>
+          </div>
+          <button onclick="closeLibraryDrawer()" class="text-slate-400 text-base p-1"><i class="ph ph-x"></i></button>
+        </div>
+        <div id="libraryList" class="flex-1 overflow-y-auto py-2.5 space-y-2 no-scrollbar"></div>
+      </div>
+    </div>
+
+    <div id="storyModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex flex-col items-center justify-center p-4">
+      <div class="w-full max-w-xs flex flex-col items-center gap-2.5">
+        <div id="storyCardPreview" class="w-full aspect-[9/16] bg-gradient-to-b from-slate-900 via-slate-950 to-black border border-white/15 rounded-2xl p-5 flex flex-col justify-between shadow-2xl relative overflow-hidden">
+          <div class="flex items-center justify-between text-[10px] text-slate-400">
+            <span id="stTopic" class="font-bold text-emerald-400 uppercase tracking-widest">#KHOA_HOC</span>
+            <span class="font-bold text-amber-400">🔥 ALLIN PRO</span>
+          </div>
+          <div class="my-auto space-y-3">
+            <h2 id="stTitle" class="text-base font-black text-white leading-snug">Tiêu đề Story</h2>
+            <div id="stContent" class="text-xs text-slate-200 leading-[2.1] font-medium"></div>
+          </div>
+          <div class="pt-2 border-t border-white/10 flex items-center justify-between text-[9px] text-slate-500 font-mono">
+            <span>DISCOVERY JOURNAL</span>
+            <span>CHẠM ĐỂ ĐỌC THÊM</span>
+          </div>
+        </div>
+        <div class="w-full flex items-center gap-2">
+          <button onclick="downloadStoryImage()" class="flex-1 py-2 rounded-xl bg-emerald-500 font-bold text-slate-950 text-xs flex items-center justify-center gap-1">
+            <i class="ph ph-download-simple"></i> Tải ảnh về máy
+          </button>
+          <button onclick="closeStoryModal()" class="px-3 py-2 rounded-xl bg-white/10 text-white font-semibold text-xs">Đóng</button>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ==================== MODAL HƯỚNG DẪN THÊM VÀO MÀN HÌNH CHÍNH (PWA SHEET) ==================== -->
+    <div id="pwaInstructionModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex flex-col justify-end">
+      <div class="w-full max-w-md mx-auto bg-slate-900 border-t border-emerald-400/30 rounded-t-3xl p-5 flex flex-col gap-3 shadow-2xl">
+        <div class="flex items-center justify-between pb-2 border-b border-white/10">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-black">
+              <i class="ph ph-export"></i>
+            </div>
+            <h3 class="text-sm font-black text-white">Thêm Vào Màn Hình Chính</h3>
+          </div>
+          <button onclick="closePwaInstructionModal()" class="w-7 h-7 rounded-full bg-white/10 text-slate-300 flex items-center justify-center">
+            <i class="ph ph-x"></i>
+          </button>
+        </div>
+
+        <div id="iosPwaGuide" class="space-y-3 text-xs text-slate-300 py-1">
+          <p class="leading-relaxed">Bạn đang dùng Safari (iPhone/iPad). Hãy làm theo 2 bước sau để cài ứng dụng:</p>
+          <div class="p-3 bg-white/5 border border-white/10 rounded-2xl space-y-2">
+            <div class="flex items-center gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-pink-500 text-slate-950 font-black text-[10px] flex items-center justify-center">1</span>
+              <span>Chạm vào nút <b>Chia sẻ</b> (<i class="ph ph-export text-emerald-400 text-sm"></i>) ở thanh dưới cùng Safari.</span>
+            </div>
+            <div class="flex items-center gap-2.5">
+              <span class="w-5 h-5 rounded-full bg-pink-500 text-slate-950 font-black text-[10px] flex items-center justify-center">2</span>
+              <span>Kéo xuống và chọn <b>"Thêm vào MH chính"</b> (Add to Home Screen).</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="generalPwaGuide" class="hidden space-y-3 text-xs text-slate-300 py-1">
+          <p class="leading-relaxed">Trình duyệt đã sẵn sàng để cài đặt Omni Space:</p>
+          <button onclick="triggerDirectBrowserPrompt()" class="w-full py-2.5 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 active:scale-95 shadow">
+            <i class="ph ph-download-simple"></i> Cài Đặt Ngay Bây Giờ
+          </button>
+          <div class="text-[10px] text-slate-400 text-center">Hoặc chọn dấu 3 chấm góc trên trình duyệt &rarr; "Cài đặt ứng dụng / Thêm vào màn hình chính".</div>
+        </div>
+
+        <button onclick="closePwaInstructionModal()" class="w-full py-2 rounded-xl bg-white/10 text-white font-bold text-xs">
+          Đã hiểu
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script>
+    /* ==================== 0. TỰ ĐỘNG CẤU HÌNH PWA MANIFEST & SERVICE WORKER ==================== */
+    let deferredPrompt = null;
+    const isIos = () => /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+    const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone) || window.matchMedia('(display-mode: standalone)').matches;
+
+    function initPwaCapabilities() {
+      // 1. Tạo SVG App Icon Data URI
+      const appSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#6366f1"/></linearGradient></defs><rect width="512" height="512" rx="128" fill="url(#g)"/><text x="50%" y="54%" font-size="240" font-family="sans-serif" font-weight="900" fill="#ffffff" text-anchor="middle" dominant-baseline="central">O</text></svg>`;
+      const iconDataUrl = "data:image/svg+xml;utf8," + encodeURIComponent(appSvg);
+
+      // Thêm icon link cho iOS
+      const appleTouchIcon = document.createElement('link');
+      appleTouchIcon.rel = 'apple-touch-icon';
+      appleTouchIcon.href = iconDataUrl;
+      document.head.appendChild(appleTouchIcon);
+
+      // 2. Tạo Manifest ảo dạng Data URI
+      const manifest = {
+        name: "Omni Space - Allin & Locket",
+        short_name: "Omni Space",
+        description: "Lưu giữ tri thức và kỷ niệm hàng ngày",
+        start_url: window.location.href,
+        display: "standalone",
+        background_color: "#020617",
+        theme_color: "#020617",
+        icons: [
+          {
+            src: iconDataUrl,
+            sizes: "512x512",
+            type: "image/svg+xml",
+            purpose: "any maskable"
+          }
+        ]
+      };
+
+      const manifestStr = "data:application/manifest+json;utf8," + encodeURIComponent(JSON.stringify(manifest));
+      const manifestTag = document.getElementById('manifestPlaceholder');
+      if (manifestTag) manifestTag.setAttribute('href', manifestStr);
+
+      // 3. Đăng ký Service Worker offline ảo (Data URI Blob)
+      if ('serviceWorker' in navigator) {
+        const swScript = `
+          self.addEventListener('install', e => self.skipWaiting());
+          self.addEventListener('activate', e => clients.claim());
+          self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => new Response('Offline'))));
+        `;
+        const blob = new Blob([swScript], { type: 'application/javascript' });
+        const swUrl = URL.createObjectURL(blob);
+        navigator.serviceWorker.register(swUrl).catch(() => {});
+      }
+
+      // 4. Bắt sự kiện cài đặt của Chromium
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        const banner = document.getElementById('pwaInstallBanner');
+        const headerBtn = document.getElementById('pwaHeaderInstallBtn');
+        if (banner) banner.classList.remove('hidden');
+        if (headerBtn) {
+          headerBtn.classList.remove('hidden');
+          headerBtn.classList.add('flex');
+        }
+      });
+
+      // Nếu đã ở chế độ độc lập (đã cài đặt), ẩn banner
+      if (isInStandaloneMode()) {
+        const banner = document.getElementById('pwaInstallBanner');
+        if (banner) banner.classList.add('hidden');
+      }
+    }
+
+    function triggerPwaInstallPrompt() {
+      if (deferredPrompt) {
+        document.getElementById('iosPwaGuide').classList.add('hidden');
+        document.getElementById('generalPwaGuide').classList.remove('hidden');
+        document.getElementById('pwaInstructionModal').classList.remove('hidden');
+      } else if (isIos()) {
+        document.getElementById('generalPwaGuide').classList.add('hidden');
+        document.getElementById('iosPwaGuide').classList.remove('hidden');
+        document.getElementById('pwaInstructionModal').classList.remove('hidden');
+      } else {
+        document.getElementById('generalPwaGuide').classList.remove('hidden');
+        document.getElementById('iosPwaGuide').classList.add('hidden');
+        document.getElementById('pwaInstructionModal').classList.remove('hidden');
+      }
+    }
+
+    function triggerDirectBrowserPrompt() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            document.getElementById('pwaInstallBanner').classList.add('hidden');
+          }
+          deferredPrompt = null;
+          closePwaInstructionModal();
+        });
+      } else {
+        alert("Bạn có thể bấm vào Menu (biểu tượng 3 chấm) của trình duyệt và chọn 'Thêm vào màn hình chính'!");
+        closePwaInstructionModal();
+      }
+    }
+
+    function closePwaInstructionModal() {
+      document.getElementById('pwaInstructionModal').classList.add('hidden');
+    }
+
+    /* ==================== 1. DỮ LIỆU BÀI BÁO ALLIN ==================== */
+    const DEFAULT_ARTICLES = [
+      {
+        id: "art_1",
+        title: "Hiệu ứng Mandela và Ký ức Giả",
+        topic: "#TAM_LY_HOC",
+        archived: false,
+        liked: false,
+        pages: [
+          "Bạn có từng nhớ chắc chắn một điều gì đó đã xảy ra, nhưng hóa ra ==nó chưa từng tồn tại==? Đó chính là ==Hiệu ứng Mandela==.",
+          "Hiện tượng này xảy ra khi hàng triệu người cùng chia sẻ một ==ký ức sai lệch hoàn toàn giống nhau== về một sự kiện hay một nhân vật lịch sử.",
+          "Bộ não chúng ta không phải máy quay phim, nó tự động ==chắp vá lỗ hổng ký ức== bằng trí tưởng tượng mà bạn không hề hay biết."
+        ]
+      },
+      {
+        id: "art_2",
+        title: "Bí mật loài sứa bất tử Turritopsis",
+        topic: "#SINH_VAT_HOC",
+        archived: false,
+        liked: true,
+        pages: [
+          "Trong tự nhiên, có một loài sinh vật sở hữu khả năng ==cải lão hoàn đồng vĩnh cửu== mang tên sứa Turritopsis dohrnii.",
+          "Khi bị thương hoặc già đi, các tế bào của nó có thể ==tự đảo ngược về giai đoạn sơ sinh== thông qua quá trình chuyển dịch tế bào đặc biệt."
+        ]
+      }
+    ];
+
+    let articles = JSON.parse(localStorage.getItem('omni_articles_pro_v1')) || DEFAULT_ARTICLES;
+    let viewingArticleId = null;
+    let libTab = 'explore';
+    let currentFilter = 'all';
+    let currentFontSize = localStorage.getItem('omni_font_size') || 'md';
+    let currentFontFamily = localStorage.getItem('omni_font_family') || 'sans';
+    let isSpeaking = false;
+
+    /* ==================== 2. DỮ LIỆU LỌ KỶ NIỆM & LOCKET ==================== */
+    const todayKey = () => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    };
+
+    let jarLogs = JSON.parse(localStorage.getItem('omni_cute_jar_v1')) || {};
+    let selectedJarDateKey = todayKey();
+    let currentMood = '😊';
+    let currentMoodColor = 'bg-amber-300';
+    let currentShelfYear = new Date().getFullYear();
+    let currentShelfMonth = new Date().getMonth();
+    let cameraStream = null;
+    let capturedPhotoDataUrl = null;
+
+    if (!jarLogs[todayKey()]) {
+      jarLogs[todayKey()] = [
+        {
+          id: 'm_sample_1',
+          type: 'note',
+          text: 'Hôm nay trời mát mẻ, hoàn thành xong mục tiêu đọc bài mới ✨',
+          mood: '😊',
+          color: 'bg-amber-300',
+          time: '08:30'
+        }
+      ];
+      localStorage.setItem('omni_cute_jar_v1', JSON.stringify(jarLogs));
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initPwaCapabilities();
+      initClock();
+      renderTikTokFeed();
+      updateStreak();
+      applyFontSize(currentFontSize);
+      applyFontFamily(currentFontFamily);
+      updateSettingsStats();
+      initParagraphInputs();
+      renderCurrentJar();
+      renderMonthlyShelf();
+    });
+
+    function initClock() {
+      const update = () => {
+        const now = new Date();
+        const hrs = String(now.getHours()).padStart(2, '0');
+        const mins = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('liveClock').innerText = `${hrs}:${mins}`;
+
+        const h = now.getHours();
+        let greet = 'Chào buổi tối 🌙';
+        if(h >= 5 && h < 11) greet = 'Chào buổi sáng ☀️';
+        else if(h >= 11 && h < 14) greet = 'Chào buổi trưa ⛅';
+        else if(h >= 14 && h < 18) greet = 'Chào buổi chiều 🌤️';
+        document.getElementById('liveGreeting').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ${greet}`;
+
+        const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+        document.getElementById('liveDate').innerText = `${days[now.getDay()]}, ${now.getDate()} tháng ${now.getMonth()+1}`;
+      };
+      update();
+      setInterval(update, 1000);
+    }
+
+    function openApp(appName) {
+      document.querySelectorAll('.app-screen').forEach(el => {
+        el.classList.remove('app-open');
+        el.classList.add('app-closed');
+      });
+
+      if (appName === 'reader') {
+        document.getElementById('readerApp').classList.remove('app-closed');
+        document.getElementById('readerApp').classList.add('app-open');
+        renderTikTokFeed();
+      } else if (appName === 'jar') {
+        document.getElementById('jarApp').classList.remove('app-closed');
+        document.getElementById('jarApp').classList.add('app-open');
+        selectedJarDateKey = todayKey();
+        renderCurrentJar();
+        renderMonthlyShelf();
+      } else if (appName === 'settings') {
+        document.getElementById('settingsApp').classList.remove('app-closed');
+        document.getElementById('settingsApp').classList.add('app-open');
+        updateSettingsStats();
+      }
+    }
+
+    function closeCurrentApp() {
+      stopCameraStream();
+      document.querySelectorAll('.app-screen').forEach(el => {
+        el.classList.remove('app-open');
+        el.classList.add('app-closed');
+      });
+      renderCurrentJar();
+    }
+
+    /* ==================== LOGIC LỌ KỶ NIỆM & KỆ LỊCH ==================== */
+    function switchJarTab(tab) {
+      const todayView = document.getElementById('jarTodayView');
+      const shelfView = document.getElementById('jarShelfView');
+      const btnToday = document.getElementById('jarTabTodayBtn');
+      const btnShelf = document.getElementById('jarTabShelfBtn');
+
+      if (tab === 'today') {
+        todayView.classList.remove('hidden');
+        shelfView.classList.add('hidden');
+        shelfView.classList.remove('flex');
+        btnToday.className = "px-2.5 py-1 rounded-lg bg-pink-500 text-white font-bold transition-all";
+        btnShelf.className = "px-2.5 py-1 rounded-lg text-slate-300 font-medium transition-all";
+        renderCurrentJar();
+      } else {
+        todayView.classList.add('hidden');
+        shelfView.classList.remove('hidden');
+        shelfView.classList.add('flex');
+        btnShelf.className = "px-2.5 py-1 rounded-lg bg-pink-500 text-white font-bold transition-all";
+        btnToday.className = "px-2.5 py-1 rounded-lg text-slate-300 font-medium transition-all";
+        renderMonthlyShelf();
+      }
+    }
+
+    function selectMood(emoji, colorClass) {
+      currentMood = emoji;
+      currentMoodColor = colorClass;
+      document.querySelectorAll('.mood-btn').forEach(btn => {
+        if (btn.innerText === emoji) {
+          btn.className = "mood-btn w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-xs scale-110 ring-2 ring-pink-400 transition-all";
+        } else {
+          btn.className = "mood-btn w-6 h-6 rounded-full bg-white/5 flex items-center justify-center text-xs transition-all";
+        }
+      });
+    }
+
+    function formatDisplayDate(dateKey) {
+      const parts = dateKey.split('-');
+      return `${parseInt(parts[2])} Tháng ${parseInt(parts[1])}`;
+    }
+
+    function renderCurrentJar() {
+      const list = jarLogs[selectedJarDateKey] || [];
+      const todayList = jarLogs[todayKey()] || [];
+
+      document.getElementById('homeJarCount').innerText = todayList.length;
+      document.getElementById('btnJarCount').innerText = list.length;
+      document.getElementById('jarTagDate').innerText = formatDisplayDate(selectedJarDateKey);
+      document.getElementById('jarTagCount').innerText = `${list.length} mảnh ký ức`;
+      document.getElementById('jarSelectedDateLabel').innerText = (selectedJarDateKey === todayKey()) ? "Hôm nay ✨" : `Ngày ${formatDisplayDate(selectedJarDateKey)}`;
+
+      const container = document.getElementById('jarItemsContainer');
+      container.innerHTML = '';
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="text-[10px] text-slate-400/70 italic pb-8">Chiếc lọ đang đợi kỷ niệm đầu tiên...</div>`;
+        return;
+      }
+
+      list.forEach((item, idx) => {
+        const rot = ((idx * 17) % 30) - 15;
+        if (item.type === 'locket') {
+          const thumb = document.createElement('div');
+          thumb.style.setProperty('--rot', `${rot}deg`);
+          thumb.className = "jar-item-anim w-10 h-10 rounded-xl border-2 border-white shadow-md overflow-hidden relative bg-slate-800 shrink-0";
+          thumb.innerHTML = `
+            <img src="${item.photo}" class="w-full h-full object-cover" alt="Locket">
+            <span class="absolute bottom-0 right-0 text-[8px] bg-black/60 px-0.5 rounded">${item.mood || '📸'}</span>
+          `;
+          container.appendChild(thumb);
+        } else {
+          const pill = document.createElement('div');
+          pill.style.setProperty('--rot', `${rot}deg`);
+          pill.className = `jar-item-anim px-2.5 py-1 rounded-full ${item.color || 'bg-pink-300'} text-slate-950 font-bold text-[10px] shadow-sm flex items-center gap-1 max-w-[110px] truncate shrink-0 border border-white/60`;
+          pill.innerHTML = `<span>${item.mood}</span> <span class="truncate">${item.text}</span>`;
+          container.appendChild(pill);
+        }
+      });
+    }
+
+    function dropQuickNoteIntoJar() {
+      const input = document.getElementById('quickNoteInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+      if (!jarLogs[selectedJarDateKey]) jarLogs[selectedJarDateKey] = [];
+      jarLogs[selectedJarDateKey].push({
+        id: 'note_' + Date.now(),
+        type: 'note',
+        text: text,
+        mood: currentMood,
+        color: currentMoodColor,
+        time: timeStr
+      });
+
+      localStorage.setItem('omni_cute_jar_v1', JSON.stringify(jarLogs));
+      input.value = '';
+      renderCurrentJar();
+    }
+
+    function openLocketCameraModal() {
+      capturedPhotoDataUrl = null;
+      document.getElementById('locketCaptionInput').value = '';
+      document.getElementById('locketPreviewImg').classList.add('hidden');
+      document.getElementById('locketVideo').classList.add('hidden');
+      document.getElementById('locketPlaceholder').classList.remove('hidden');
+      document.getElementById('btnCaptureCam').classList.add('hidden');
+      document.getElementById('btnStartCam').classList.remove('hidden');
+      document.getElementById('locketCameraModal').classList.remove('hidden');
+    }
+
+    function closeLocketCameraModal() {
+      stopCameraStream();
+      document.getElementById('locketCameraModal').classList.add('hidden');
+    }
+
+    async function startCameraStream() {
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+        const video = document.getElementById('locketVideo');
+        video.srcObject = cameraStream;
+        video.classList.remove('hidden');
+        document.getElementById('locketPlaceholder').classList.add('hidden');
+        document.getElementById('locketPreviewImg').classList.add('hidden');
+        document.getElementById('btnStartCam').classList.add('hidden');
+        document.getElementById('btnCaptureCam').classList.remove('hidden');
+      } catch (err) {
+        alert("Không thể mở Camera trực tiếp. Bạn bấm 'Chọn ảnh' từ máy nhé!");
+      }
+    }
+
+    function stopCameraStream() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+    }
+
+    function captureLocketPhoto() {
+      const video = document.getElementById('locketVideo');
+      const canvas = document.createElement('canvas');
+      const size = 360;
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+
+      const minDim = Math.min(video.videoWidth || 360, video.videoHeight || 360);
+      const sx = ((video.videoWidth || 360) - minDim) / 2;
+      const sy = ((video.videoHeight || 360) - minDim) / 2;
+
+      ctx.drawImage(video, sx, sy, minDim, minDim, 0, 0, size, size);
+      capturedPhotoDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+      stopCameraStream();
+      video.classList.add('hidden');
+      const preview = document.getElementById('locketPreviewImg');
+      preview.src = capturedPhotoDataUrl;
+      preview.classList.remove('hidden');
+      document.getElementById('btnCaptureCam').classList.add('hidden');
+      document.getElementById('btnStartCam').classList.remove('hidden');
+    }
+
+    function handleLocketFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const size = 360;
+          canvas.width = size;
+          canvas.height = size;
+          const ctx = canvas.getContext('2d');
+          const minDim = Math.min(img.width, img.height);
+          const sx = (img.width - minDim) / 2;
+          const sy = (img.height - minDim) / 2;
+          ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+          capturedPhotoDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+
+          stopCameraStream();
+          document.getElementById('locketVideo').classList.add('hidden');
+          document.getElementById('locketPlaceholder').classList.add('hidden');
+          const preview = document.getElementById('locketPreviewImg');
+          preview.src = capturedPhotoDataUrl;
+          preview.classList.remove('hidden');
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsText ? reader.readAsDataURL(file) : null;
+    }
+
+    function saveLocketToJar() {
+      if (!capturedPhotoDataUrl) {
+        alert("Hãy chụp một bức ảnh hoặc chọn ảnh trước khi thả vào lọ nhé!");
+        return;
+      }
+
+      const caption = document.getElementById('locketCaptionInput').value.trim() || "Khoảnh khắc Locket ✨";
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+      if (!jarLogs[selectedJarDateKey]) jarLogs[selectedJarDateKey] = [];
+      jarLogs[selectedJarDateKey].push({
+        id: 'locket_' + Date.now(),
+        type: 'locket',
+        photo: capturedPhotoDataUrl,
+        text: caption,
+        mood: currentMood,
+        time: timeStr
+      });
+
+      localStorage.setItem('omni_cute_jar_v1', JSON.stringify(jarLogs));
+      closeLocketCameraModal();
+      renderCurrentJar();
+    }
+
+    function openDayMemoriesModal() {
+      const list = jarLogs[selectedJarDateKey] || [];
+      document.getElementById('modalJarTitleDate').innerText = `Lọ Kỷ Niệm – ${formatDisplayDate(selectedJarDateKey)}`;
+      const container = document.getElementById('dayMemoriesList');
+      container.innerHTML = '';
+
+      if (list.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-xs text-slate-400">Chưa có mảnh giấy hay bức ảnh Locket nào trong chiếc lọ này.</div>`;
+      } else {
+        list.slice().reverse().forEach(item => {
+          const card = document.createElement('div');
+          if (item.type === 'locket') {
+            card.className = "bg-slate-800/90 border border-pink-400/25 rounded-3xl p-3 flex flex-col items-center gap-2 shadow-lg";
+            card.innerHTML = `
+              <div class="w-full flex items-center justify-between text-[10px] text-slate-400 px-1">
+                <span class="font-bold text-pink-300 flex items-center gap-1">${item.mood} Locket Photo</span>
+                <div class="flex items-center gap-2">
+                  <span>${item.time}</span>
+                  <button onclick="deleteJarItem('${item.id}')" class="text-rose-400"><i class="ph ph-trash"></i></button>
+                </div>
+              </div>
+              <div class="relative w-56 h-56 rounded-2xl overflow-hidden border border-white/15 shadow-md">
+                <img src="${item.photo}" class="w-full h-full object-cover" alt="Locket">
+                <div class="absolute bottom-2 inset-x-3 bg-black/65 backdrop-blur-md text-white text-center text-xs font-semibold py-1 px-2.5 rounded-full border border-white/10">
+                  ${item.text}
+                </div>
+              </div>
+            `;
+          } else {
+            card.className = "bg-white/5 border border-white/10 rounded-2xl p-3 flex items-start justify-between gap-2.5";
+            card.innerHTML = `
+              <div class="w-8 h-8 rounded-xl ${item.color || 'bg-amber-300'} text-slate-950 flex items-center justify-center text-base shrink-0 shadow">
+                ${item.mood}
+              </div>
+              <div class="flex-1">
+                <div class="text-xs text-white leading-relaxed font-medium">${item.text}</div>
+                <div class="text-[9px] text-slate-400 mt-1">${item.time}</div>
+              </div>
+              <button onclick="deleteJarItem('${item.id}')" class="text-slate-500 hover:text-rose-400 p-1"><i class="ph ph-trash text-xs"></i></button>
+            `;
+          }
+          container.appendChild(card);
+        });
+      }
+
+      document.getElementById('dayMemoriesModal').classList.remove('hidden');
+    }
+
+    function closeDayMemoriesModal() {
+      document.getElementById('dayMemoriesModal').classList.add('hidden');
+    }
+
+    function deleteJarItem(itemId) {
+      if (!jarLogs[selectedJarDateKey]) return;
+      jarLogs[selectedJarDateKey] = jarLogs[selectedJarDateKey].filter(x => x.id !== itemId);
+      localStorage.setItem('omni_cute_jar_v1', JSON.stringify(jarLogs));
+      openDayMemoriesModal();
+      renderCurrentJar();
+      renderMonthlyShelf();
+    }
+
+    function changeShelfMonth(delta) {
+      currentShelfMonth += delta;
+      if (currentShelfMonth < 0) {
+        currentShelfMonth = 11;
+        currentShelfYear--;
+      } else if (currentShelfMonth > 11) {
+        currentShelfMonth = 0;
+        currentShelfYear++;
+      }
+      renderMonthlyShelf();
+    }
+
+    function renderMonthlyShelf() {
+      const title = document.getElementById('shelfMonthTitle');
+      title.innerText = `THÁNG ${currentShelfMonth + 1} / ${currentShelfYear}`;
+
+      const daysInMonth = new Date(currentShelfYear, currentShelfMonth + 1, 0).getDate();
+      const shelfContainer = document.getElementById('monthlyShelfGrid');
+      shelfContainer.innerHTML = '';
+
+      const jarsPerRow = 6;
+      for (let i = 1; i <= daysInMonth; i += jarsPerRow) {
+        const rowDiv = document.createElement('div');
+        rowDiv.className = "wooden-shelf-row rounded-t-xl px-2 pt-3 pb-2 grid grid-cols-6 gap-2 items-end";
+
+        for (let d = i; d < i + jarsPerRow && d <= daysInMonth; d++) {
+          const dateKey = `${currentShelfYear}-${String(currentShelfMonth + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+          const items = jarLogs[dateKey] || [];
+          const hasPhoto = items.some(x => x.type === 'locket');
+          const isToday = (dateKey === todayKey());
+
+          const dotsHtml = items.slice(0, 5).map(it => {
+            const c = it.type === 'locket' ? 'bg-pink-400 ring-1 ring-white' : (it.color || 'bg-amber-300');
+            return `<span class="w-2 h-2 rounded-full ${c}"></span>`;
+          }).join('');
+
+          const jarEl = document.createElement('div');
+          jarEl.onclick = () => {
+            selectedJarDateKey = dateKey;
+            switchJarTab('today');
+          };
+          jarEl.className = "flex flex-col items-center cursor-pointer active:scale-90 transition-transform";
+          jarEl.innerHTML = `
+            <div class="w-5 h-1.5 cork-lid rounded-t-sm"></div>
+            <div class="w-11 h-14 rounded-xl border ${isToday ? 'border-pink-400 bg-pink-500/15' : 'border-white/25 bg-white/5'} p-1 flex flex-col justify-between items-center relative overflow-hidden shadow-sm">
+              <span class="text-[9px] font-black ${isToday ? 'text-pink-300' : 'text-slate-300'}">${d}</span>
+              ${hasPhoto ? `<span class="text-[8px]">📸</span>` : ''}
+              <div class="flex flex-wrap justify-center gap-0.5 w-full pb-0.5">
+                ${dotsHtml}
+              </div>
+            </div>
+          `;
+          rowDiv.appendChild(jarEl);
+        }
+
+        shelfContainer.appendChild(rowDiv);
+      }
+    }
+
+    /* ==================== 3. LOGIC ALLIN READER PRO ==================== */
+    function getExploreArticles() {
+      return articles.filter(a => !a.archived);
+    }
+
+    function renderTikTokFeed() {
+      const container = document.getElementById('tiktokFeedContainer');
+      const activeList = getExploreArticles();
+      document.getElementById('savedBadgeCount').innerText = activeList.length;
+
+      if(activeList.length === 0) {
+        container.innerHTML = `
+          <div class="w-full h-full flex flex-col items-center justify-center p-6 text-center text-slate-400">
+            <i class="ph ph-sparkle text-4xl text-amber-400 mb-2"></i>
+            <h3 class="text-base font-bold text-white mb-1">Đã lướt hết feed khám phá!</h3>
+            <p class="text-xs mb-4">Bạn có thể tạo bài mới hoặc vào mục Đã Lưu để khôi phục bài cũ.</p>
+            <button onclick="openCreateModal()" class="px-4 py-2 rounded-xl bg-indigo-600 text-white font-bold text-xs">Soạn bài mới ngay</button>
+          </div>
+        `;
+        return;
+      }
+
+      const gradients = [
+        "from-indigo-950 via-slate-900 to-black",
+        "from-purple-950 via-slate-900 to-black",
+        "from-teal-950 via-slate-900 to-black",
+        "from-blue-950 via-slate-900 to-black"
+      ];
+
+      container.innerHTML = activeList.map((art, idx) => {
+        const bgGrad = gradients[idx % gradients.length];
+        const snippet = art.pages[0] || "";
+        const formattedSnippet = snippet.replace(/==(.*?)==/g, '<span class="allin-hl">$1</span>');
+        const isLiked = art.liked ? 'text-rose-500' : 'text-white';
+
+        return `
+          <div class="snap-card-item w-full flex flex-col justify-between p-5 pt-16 pb-6 bg-gradient-to-b ${bgGrad} border-b border-white/5 relative">
+            <div onclick="openArticleDetail('${art.id}')" class="absolute inset-x-0 top-16 bottom-24 z-10 cursor-pointer"></div>
+            <div class="my-auto space-y-3 z-0 pr-12">
+              <div class="flex items-center gap-1.5">
+                <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                  ${art.topic || '#KHOA_HOC'}
+                </span>
+                <span class="text-[10px] text-slate-400">${art.pages.length} đoạn</span>
+              </div>
+              <h2 class="text-2xl font-black text-white leading-tight drop-shadow-md">${art.title}</h2>
+              <div class="text-sm text-slate-200 leading-relaxed font-normal pt-1">${formattedSnippet}</div>
+              <div class="pt-2 flex items-center gap-1.5 text-xs text-amber-300 font-semibold">
+                <i class="ph ph-cursor-click"></i> Chạm để đọc toàn bộ ${art.pages.length} đoạn
+              </div>
+            </div>
+
+            <div class="absolute right-3.5 bottom-24 z-20 flex flex-col items-center gap-4">
+              <button onclick="toggleLikeArticle('${art.id}')" class="flex flex-col items-center gap-1 text-slate-300 active:scale-75 transition-transform">
+                <div class="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-xl ${isLiked}">
+                  <i class="ph-fill ph-heart"></i>
+                </div>
+                <span class="text-[9px] font-semibold">Thích</span>
+              </button>
+              <button onclick="openArticleDetail('${art.id}')" class="flex flex-col items-center gap-1 text-slate-300 active:scale-75 transition-transform">
+                <div class="w-10 h-10 rounded-full bg-emerald-500 text-slate-950 flex items-center justify-center text-xl shadow-lg shadow-emerald-500/30 font-bold">
+                  <i class="ph ph-article"></i>
+                </div>
+                <span class="text-[9px] font-bold text-emerald-400">Đọc hết</span>
+              </button>
+              <button onclick="archiveArticleById('${art.id}')" class="flex flex-col items-center gap-1 text-slate-300 active:scale-75 transition-transform">
+                <div class="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-xl text-slate-400">
+                  <i class="ph ph-eye-slash"></i>
+                </div>
+                <span class="text-[9px] font-semibold text-slate-400">Bỏ qua</span>
+              </button>
+            </div>
+
+            <div class="w-full flex items-center justify-between text-[11px] text-slate-400 border-t border-white/10 pt-2 z-20">
+              <span class="flex items-center gap-1"><i class="ph ph-arrows-down-up"></i> Vuốt dọc đổi bài</span>
+              <button onclick="openArticleDetail('${art.id}')" class="px-3 py-1 rounded-lg bg-white/15 text-white font-bold text-xs flex items-center gap-1">
+                Xem toàn bộ <i class="ph ph-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openArticleDetail(id) {
+      viewingArticleId = id;
+      const art = articles.find(a => a.id === id);
+      if(!art) return;
+
+      document.getElementById('dtTitle').innerText = art.title;
+      document.getElementById('dtTopic').innerText = art.topic || '#KHOA_HOC';
+      document.getElementById('dtParagraphCount').innerText = `${art.pages.length} đoạn nội dung`;
+      
+      const paragraphsHtml = art.pages.map((p, idx) => {
+        const formatted = p.replace(/==(.*?)==/g, '<span class="allin-hl">$1</span>');
+        return `
+          <div class="p-3.5 rounded-xl bg-white/5 border border-white/5 leading-relaxed">
+            <span class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Đoạn ${idx + 1}</span>
+            <p>${formatted}</p>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('dtBodyParagraphs').innerHTML = paragraphsHtml;
+      const heartBtn = document.getElementById('detailHeartBtn');
+      heartBtn.className = `w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-base active:scale-90 ${art.liked ? 'text-rose-500' : 'text-slate-300'}`;
+
+      document.getElementById('articleDetailModal').classList.remove('translate-y-full');
+      updateReadingProgress();
+    }
+
+    function closeArticleDetail() {
+      stopSpeech();
+      document.getElementById('articleDetailModal').classList.add('translate-y-full');
+      viewingArticleId = null;
+    }
+
+    function updateReadingProgress() {
+      const area = document.getElementById('articleScrollArea');
+      const maxScroll = area.scrollHeight - area.clientHeight;
+      const pct = maxScroll > 0 ? (area.scrollTop / maxScroll) * 100 : 0;
+      document.getElementById('readingProgressBar').style.width = `${Math.min(100, Math.max(0, pct))}%`;
+    }
+
+    function toggleSpeechArticle() {
+      if (!('speechSynthesis' in window)) return;
+      if (isSpeaking) { stopSpeech(); return; }
+      const art = articles.find(a => a.id === viewingArticleId);
+      if (!art) return;
+
+      const utter = new SpeechSynthesisUtterance(art.title + ". " + art.pages.join(" ").replace(/==/g, ''));
+      utter.lang = 'vi-VN';
+      utter.onstart = () => {
+        isSpeaking = true;
+        document.getElementById('ttsBtnText').innerText = 'Dừng';
+      };
+      utter.onend = () => stopSpeech();
+      window.speechSynthesis.speak(utter);
+    }
+
+    function stopSpeech() {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      isSpeaking = false;
+      const btnText = document.getElementById('ttsBtnText');
+      if(btnText) btnText.innerText = 'Nghe';
+    }
+
+    function toggleLikeArticle(id) {
+      const art = articles.find(a => a.id === id);
+      if(art) { art.liked = !art.liked; saveArticles(); renderTikTokFeed(); }
+    }
+
+    function toggleFavoriteCurrent() {
+      if(!viewingArticleId) return;
+      toggleLikeArticle(viewingArticleId);
+    }
+
+    function archiveArticleById(id) {
+      const art = articles.find(a => a.id === id);
+      if(art) art.archived = true;
+      saveArticles();
+      renderTikTokFeed();
+      updateSettingsStats();
+    }
+
+    function archiveAndNext() {
+      if(viewingArticleId) { archiveArticleById(viewingArticleId); closeArticleDetail(); }
+    }
+
+    function copyArticleShareText() {
+      if(!viewingArticleId) return;
+      const art = articles.find(a => a.id === viewingArticleId);
+      if(!art) return;
+      const text = `📖 [${art.topic}] ${art.title}\n\n${art.pages.join("\n\n").replace(/==/g, '')}`;
+      navigator.clipboard.writeText(text).then(() => alert("Đã sao chép bài viết!"));
+    }
+
+    function saveArticles() {
+      localStorage.setItem('omni_articles_pro_v1', JSON.stringify(articles));
+    }
+
+    /* SOẠN BÀI & PROMPT AI */
+    let currentInputMode = 'manual';
+    function switchInputMode(mode) {
+      currentInputMode = mode;
+      document.getElementById('manualSection').classList.toggle('hidden', mode !== 'manual');
+      document.getElementById('rawSection').classList.toggle('hidden', mode === 'manual');
+      document.getElementById('modeManualBtn').className = mode === 'manual' ? "flex-1 py-1 rounded-lg bg-indigo-600 text-white font-bold" : "flex-1 py-1 rounded-lg text-slate-400 font-medium";
+      document.getElementById('modeRawBtn').className = mode !== 'manual' ? "flex-1 py-1 rounded-lg bg-indigo-600 text-white font-bold" : "flex-1 py-1 rounded-lg text-slate-400 font-medium";
+    }
+
+    function autoHighlightRawText() {
+      const rawInput = document.getElementById('rawTextInput');
+      rawInput.value = rawInput.value.replace(/(\b(?:quan trọng|bất tử|vĩnh cửu|đặc biệt|bí mật|duy nhất)\b[^,\.\n]*)/gi, '==$1==');
+    }
+
+    function initParagraphInputs() {
+      const container = document.getElementById('paragraphsInputsContainer');
+      container.innerHTML = '';
+      addParagraphField("Đoạn mở đầu có ==từ khóa nổi bật==...");
+      addParagraphField("Đoạn giải thích chi tiết...");
+    }
+
+    function addParagraphField(placeholder = "") {
+      const container = document.getElementById('paragraphsInputsContainer');
+      const count = container.querySelectorAll('.p-row').length + 1;
+      const row = document.createElement('div');
+      row.className = 'p-row flex items-start gap-1.5';
+      row.innerHTML = `
+        <div class="flex-1">
+          <textarea rows="2" placeholder="${placeholder || `Đoạn ${count}...`}" class="p-input w-full bg-slate-800 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500"></textarea>
+        </div>
+        <button onclick="removeParagraphField(this)" type="button" class="mt-1.5 p-1.5 text-slate-500 hover:text-rose-400"><i class="ph ph-trash text-sm"></i></button>
+      `;
+      container.appendChild(row);
+    }
+
+    function removeParagraphField(btn) {
+      const container = document.getElementById('paragraphsInputsContainer');
+      if (container.querySelectorAll('.p-row').length <= 1) return;
+      btn.closest('.p-row').remove();
+    }
+
+    function openCreateModal() { document.getElementById('createModal').classList.remove('hidden'); }
+    function closeCreateModal() { document.getElementById('createModal').classList.add('hidden'); }
+
+    function fillSampleTemplate() {
+      document.getElementById('manualTitle').value = "Thành phố dưới lòng đất Derinkuyu";
+      document.getElementById('manualTopic').value = "#LICH_SU";
+      const container = document.getElementById('paragraphsInputsContainer');
+      container.innerHTML = '';
+      [
+        "Ở Thổ Nhĩ Kỳ, người ta từng tình cờ phát hiện một ==thành phố cổ sâu 85 mét== dưới lòng đất.",
+        "Nơi này có sức chứa lên tới ==hơn 20.000 người sinh sống== cùng lúc với đầy đủ giếng nước và hầm rượu."
+      ].forEach(t => {
+        addParagraphField();
+        const inputs = container.querySelectorAll('.p-input');
+        inputs[inputs.length - 1].value = t;
+      });
+    }
+
+    function saveManualArticle() {
+      const title = document.getElementById('manualTitle').value.trim();
+      const topic = document.getElementById('manualTopic').value.trim() || '#KIEN_THUC';
+      let pages = [];
+
+      if (currentInputMode === 'manual') {
+        document.querySelectorAll('.p-input').forEach(inp => {
+          if(inp.value.trim()) pages.push(inp.value.trim());
+        });
+      } else {
+        const raw = document.getElementById('rawTextInput').value.trim();
+        pages = raw.split(/\n+/).map(s => s.trim()).filter(s => s.length > 0);
+      }
+
+      if (!title || pages.length === 0) return alert("Vui lòng nhập tiêu đề và nội dung!");
+
+      articles.unshift({
+        id: 'art_' + Date.now(),
+        title,
+        topic: topic.startsWith('#') ? topic : '#' + topic,
+        archived: false,
+        liked: false,
+        pages
+      });
+      saveArticles();
+      closeCreateModal();
+      openApp('reader');
+    }
+
+    function openPromptModal() {
+      document.getElementById('aiPromptModal').classList.remove('hidden');
+      updateAiPromptPreview();
+    }
+    function closePromptModal() { document.getElementById('aiPromptModal').classList.add('hidden'); }
+
+    function updateAiPromptPreview() {
+      const topic = document.getElementById('aiTopicInput').value.trim() || "[Chủ đề bạn muốn tìm]";
+      document.getElementById('promptPreviewText').innerText = `Hãy biên soạn bài viết ngắn hấp dẫn về chủ đề: "${topic}". Chia thành nhiều đoạn súc tích, mỗi đoạn bọc từ khóa quan trọng nhất trong cặp dấu ==...==.`;
+    }
+
+    function copyAiPromptToClipboard() {
+      navigator.clipboard.writeText(document.getElementById('promptPreviewText').innerText).then(() => {
+        document.getElementById('copyToast').classList.remove('hidden');
+      });
+    }
+
+    function openLibraryDrawer() { document.getElementById('libraryDrawer').classList.remove('hidden'); renderLibraryList(); }
+    function closeLibraryDrawer() { document.getElementById('libraryDrawer').classList.add('hidden'); }
+
+    function switchLibTab(tab) { libTab = tab; renderLibraryList(); }
+
+    function renderLibraryList() {
+      const container = document.getElementById('libraryList');
+      const explores = articles.filter(a => !a.archived);
+      const archives = articles.filter(a => a.archived);
+      document.getElementById('exploreCount').innerText = explores.length;
+      document.getElementById('archivedCount').innerText = archives.length;
+      const list = libTab === 'explore' ? explores : archives;
+      container.innerHTML = list.map(art => `
+        <div class="p-2.5 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between gap-2">
+          <div onclick="openArticleDetail('${art.id}'); closeLibraryDrawer();" class="flex-1 cursor-pointer">
+            <div class="text-[9px] text-emerald-400 font-bold uppercase">${art.topic}</div>
+            <div class="text-xs font-bold text-white line-clamp-1">${art.title}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function generateStoryCardFromDetail() {
+      const art = articles.find(a => a.id === viewingArticleId);
+      if(!art) return;
+      document.getElementById('stTitle').innerText = art.title;
+      document.getElementById('stTopic').innerText = art.topic;
+      document.getElementById('stContent').innerHTML = (art.pages[0] || "").replace(/==(.*?)==/g, '<span class="allin-hl">$1</span>');
+      document.getElementById('storyModal').classList.remove('hidden');
+    }
+    function closeStoryModal() { document.getElementById('storyModal').classList.add('hidden'); }
+
+    function downloadStoryImage() {
+      html2canvas(document.getElementById('storyCardPreview'), { scale: 2, backgroundColor: null }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `Story_${Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+
+    function setFontSize(size) { currentFontSize = size; localStorage.setItem('omni_font_size', size); applyFontSize(size); }
+    function applyFontSize(size) {
+      const content = document.getElementById('dtBodyParagraphs');
+      content.classList.remove('font-size-sm', 'font-size-md', 'font-size-lg');
+      content.classList.add(`font-size-${size}`);
+    }
+
+    function setFontFamily(family) { currentFontFamily = family; localStorage.setItem('omni_font_family', family); applyFontFamily(family); }
+    function applyFontFamily(family) {
+      document.body.classList.remove('font-sans-mode', 'font-serif-mode');
+      document.body.classList.add(family === 'serif' ? 'font-serif-mode' : 'font-sans-mode');
+    }
+
+    function updateSettingsStats() {
+      document.getElementById('statTotalArticles').innerText = articles.length;
+      document.getElementById('statReadArticles').innerText = articles.filter(a => a.archived).length;
+    }
+
+    function exportBackupData() {
+      const backup = { articles, jarLogs };
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup, null, 2));
+      const a = document.createElement('a');
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", `OmniSpace_Backup_${todayKey()}.json`);
+      a.click();
+    }
+
+    function importBackupData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported.articles) articles = imported.articles;
+          if (imported.jarLogs) jarLogs = imported.jarLogs;
+          saveArticles();
+          localStorage.setItem('omni_cute_jar_v1', JSON.stringify(jarLogs));
+          renderTikTokFeed();
+          renderCurrentJar();
+          alert("Khôi phục toàn bộ bài đọc & Lọ Kỷ Niệm thành công!");
+        } catch (err) { alert("File không hợp lệ!"); }
+      };
+      reader.readAsText(file);
+    }
+
+    function updateStreak() {
+      document.getElementById('streakCount').innerText = localStorage.getItem('omni_streak_clean_v1') || 1;
+    }
+
+    function toggleTheme() { document.documentElement.classList.toggle('dark'); }
+
+    function setAppFilter(cat) {
+      currentFilter = cat;
+      filterApps();
+    }
+
+    function filterApps() {
+      const q = document.getElementById('appSearchInput').value.toLowerCase();
+      document.querySelectorAll('.app-item').forEach(el => {
+        const cat = el.getAttribute('data-cat');
+        const text = el.innerText.toLowerCase();
+        el.style.display = ((currentFilter === 'all' || cat === currentFilter) && text.includes(q)) ? 'flex' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>
