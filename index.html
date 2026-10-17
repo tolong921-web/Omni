@@ -140,23 +140,23 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 antialiased select-none overflow-hidden font-sans-mode">
+<body class="bg-slate-950 text-slate-100 antialiased select-none overflow-hidden font-sans-mode transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100 bg-slate-50 text-slate-900">
 
   <!-- KHUNG HIỂN THỊ CHÍNH -->
-  <div class="relative w-full h-full max-w-md mx-auto flex flex-col justify-between overflow-hidden bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-950">
+  <div class="relative w-full h-full max-w-md mx-auto flex flex-col justify-between overflow-hidden bg-gradient-to-b dark:from-slate-900 dark:via-indigo-950 dark:to-slate-950 from-slate-100 via-indigo-50 to-slate-200 transition-colors duration-300">
 
     <!-- ==================== 1. LAUNCHER (MÀN HÌNH CHÍNH) ==================== -->
     <div id="homeScreen" class="w-full h-full flex flex-col justify-between p-4 pb-5 overflow-y-auto no-scrollbar">
       
       <!-- Top Widget: Đồng hồ, Lời chào & Streak -->
       <div class="mt-2 flex flex-col gap-3">
-        <div class="flex items-center justify-between text-xs px-1 text-slate-400">
-          <span id="liveGreeting" class="font-medium text-emerald-400 flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Chào bạn
+        <div class="flex items-center justify-between text-xs px-1 dark:text-slate-400 text-slate-500">
+          <span id="liveGreeting" class="font-medium text-emerald-500 dark:text-emerald-400 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 dark:bg-emerald-400 animate-pulse"></span> Chào bạn
           </span>
           <div class="flex items-center gap-2">
             <!-- Nút thêm vào màn hình chính -->
-            <button id="pwaHeaderInstallBtn" onclick="triggerPwaInstallPrompt()" class="hidden px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-semibold items-center gap-1 active:scale-95">
+            <button id="pwaHeaderInstallBtn" onclick="triggerPwaInstallPrompt()" class="hidden px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 border border-emerald-400/30 text-[10px] font-semibold items-center gap-1 active:scale-95">
               <i class="ph ph-download-simple"></i> Cài Đặt App
             </button>
             <span id="liveDate">Hôm nay</span>
@@ -164,100 +164,94 @@
         </div>
 
         <div class="grid grid-cols-3 gap-2.5">
-          <div class="col-span-2 bg-white/5 border border-white/10 rounded-2xl p-3.5 flex flex-col justify-center backdrop-blur-sm">
-            <div id="liveClock" class="text-3xl font-black tracking-tight text-white leading-tight">19:00</div>
-            <div class="text-[11px] text-slate-400 mt-0.5">Lưu giữ tri thức & khoảnh khắc</div>
+          <div class="col-span-2 dark:bg-white/5 bg-white/60 border dark:border-white/10 border-slate-200 rounded-2xl p-3.5 flex flex-col justify-center backdrop-blur-sm shadow-sm">
+            <div id="liveClock" class="text-3xl font-black tracking-tight dark:text-white text-slate-800 leading-tight">19:00</div>
+            <div class="text-[11px] dark:text-slate-400 text-slate-500 mt-0.5">Lưu giữ tri thức & khoảnh khắc</div>
           </div>
-          <div class="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-2.5 flex flex-col items-center justify-center backdrop-blur-sm">
+          <div class="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-2.5 flex flex-col items-center justify-center backdrop-blur-sm shadow-sm">
             <span class="text-xl">🔥</span>
-            <div class="text-base font-black text-amber-400 leading-tight mt-0.5"><span id="streakCount">1</span> Ngày</div>
-            <div class="text-[9px] text-amber-300/70 font-semibold uppercase tracking-wider">Chuỗi ngày</div>
+            <div class="text-base font-black text-amber-500 dark:text-amber-400 leading-tight mt-0.5"><span id="streakCount">1</span> Ngày</div>
+            <div class="text-[9px] text-amber-600 dark:text-amber-300/70 font-semibold uppercase tracking-wider">Chuỗi ngày</div>
           </div>
         </div>
 
         <!-- Banner mời thêm vào màn hình chính (PWA Card) -->
         <div id="pwaInstallBanner" class="bg-gradient-to-r from-emerald-500/20 via-teal-500/15 to-cyan-500/20 border border-emerald-400/30 rounded-2xl p-2.5 flex items-center justify-between shadow-md">
           <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-emerald-500/30 border border-emerald-400/40 flex items-center justify-center text-emerald-300 text-base">
+            <div class="w-8 h-8 rounded-xl bg-emerald-500/30 border border-emerald-400/40 flex items-center justify-center dark:text-emerald-300 text-emerald-700 text-base">
               <i class="ph ph-app-window"></i>
             </div>
             <div>
-              <div class="text-xs font-bold text-white leading-tight">Thêm Vào Màn Hình Chính</div>
-              <div class="text-[10px] text-emerald-200/70">Mở app nhanh toàn màn hình không che link</div>
+              <div class="text-xs font-bold dark:text-white text-slate-800 leading-tight">Thêm Vào Màn Hình Chính</div>
+              <div class="text-[10px] dark:text-emerald-200/70 text-emerald-700">Mở app nhanh toàn màn hình</div>
             </div>
           </div>
-          <button onclick="triggerPwaInstallPrompt()" class="px-3 py-1.5 rounded-xl bg-emerald-500 text-slate-950 font-black text-[11px] active:scale-95 shadow">
+          <button onclick="triggerPwaInstallPrompt()" class="px-3 py-1.5 rounded-xl bg-emerald-500 text-white dark:text-slate-950 font-black text-[11px] active:scale-95 shadow">
             Cài Ngay
           </button>
         </div>
 
         <!-- Ô Tìm Kiếm -->
         <div class="relative mt-0.5">
-          <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+          <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 dark:text-slate-400 text-slate-500 text-sm"></i>
           <input type="text" id="appSearchInput" oninput="filterApps()" placeholder="Tìm kiếm ứng dụng..." 
-            class="w-full bg-white/5 border border-white/10 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-emerald-500/50">
+            class="w-full dark:bg-white/5 bg-white/60 border dark:border-white/10 border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs dark:text-white text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500/50 shadow-sm">
         </div>
 
         <!-- Bộ lọc tab -->
         <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-[11px]">
-          <button onclick="setAppFilter('all')" class="cat-pill px-2.5 py-1 rounded-lg bg-white/15 text-white font-medium">Tất cả</button>
-          <button onclick="setAppFilter('study')" class="cat-pill px-2.5 py-1 rounded-lg bg-white/5 text-slate-400">Đọc & Nhật ký</button>
-          <button onclick="setAppFilter('tools')" class="cat-pill px-2.5 py-1 rounded-lg bg-white/5 text-slate-400">Hệ thống</button>
+          <button onclick="setAppFilter('all')" class="cat-pill px-2.5 py-1 rounded-lg dark:bg-white/15 bg-slate-800 text-white font-medium">Tất cả</button>
+          <button onclick="setAppFilter('study')" class="cat-pill px-2.5 py-1 rounded-lg dark:bg-white/5 bg-white/60 dark:text-slate-400 text-slate-600 border border-slate-200 dark:border-transparent">Đọc & Nhật ký</button>
+          <button onclick="setAppFilter('tools')" class="cat-pill px-2.5 py-1 rounded-lg dark:bg-white/5 bg-white/60 dark:text-slate-400 text-slate-600 border border-slate-200 dark:border-transparent">Hệ thống</button>
         </div>
       </div>
 
       <!-- Grid Ứng Dụng -->
       <div id="appGrid" class="grid grid-cols-4 gap-y-5 gap-x-2 my-auto py-4 px-1">
-        <!-- Khám Phá Reels -->
         <div class="app-item flex flex-col items-center gap-1.5 cursor-pointer active:scale-90 transition-transform" data-cat="study" onclick="openApp('reader')">
           <div class="relative w-14 h-14 p-3 rounded-2xl bg-gradient-to-tr from-rose-500 via-red-500 to-amber-500 flex items-center justify-center text-white text-2xl shadow-lg border border-white/20">
             <i class="ph ph-play"></i>
             <span class="absolute -top-1 -right-1 bg-cyan-400 text-[7px] font-black px-1 py-0.5 rounded-full text-slate-950">REELS</span>
           </div>
-          <span class="text-[11px] font-medium text-slate-200 tracking-tight text-center">Khám Phá</span>
+          <span class="text-[11px] font-medium dark:text-slate-200 text-slate-700 tracking-tight text-center">Khám Phá</span>
         </div>
 
-        <!-- Lọ Kỷ Niệm (Locket & Note Jar) -->
         <div class="app-item flex flex-col items-center gap-1.5 cursor-pointer active:scale-90 transition-transform" data-cat="study" onclick="openApp('jar')">
           <div class="relative w-14 h-14 p-3 rounded-2xl bg-gradient-to-tr from-pink-500 via-fuchsia-500 to-amber-300 flex items-center justify-center text-white text-2xl shadow-lg border border-white/20">
             <i class="ph ph-jar"></i>
             <span class="absolute -top-1 -right-1 bg-yellow-300 text-[7px] font-black px-1 py-0.5 rounded-full text-slate-950">CUTE</span>
           </div>
-          <span class="text-[11px] font-medium text-pink-200 tracking-tight text-center">Lọ Kỷ Niệm</span>
+          <span class="text-[11px] font-medium dark:text-pink-200 text-pink-600 tracking-tight text-center">Lọ Kỷ Niệm</span>
         </div>
 
-        <!-- Soạn Bài -->
         <div class="app-item flex flex-col items-center gap-1.5 cursor-pointer active:scale-90 transition-transform" data-cat="study" onclick="openCreateModal()">
           <div class="relative w-14 h-14 p-3 rounded-2xl bg-gradient-to-tr from-indigo-600 to-blue-500 flex items-center justify-center text-white text-2xl shadow-lg border border-white/20">
             <i class="ph ph-pencil-line"></i>
             <span class="absolute -top-1 -right-1 bg-emerald-400 text-[7px] font-black px-1 py-0.5 rounded-full text-slate-950">AI</span>
           </div>
-          <span class="text-[11px] font-medium text-slate-200 tracking-tight text-center">Soạn Bài</span>
+          <span class="text-[11px] font-medium dark:text-slate-200 text-slate-700 tracking-tight text-center">Soạn Bài</span>
         </div>
 
-        <!-- Cài Đặt -->
         <div class="app-item flex flex-col items-center gap-1.5 cursor-pointer active:scale-90 transition-transform" data-cat="tools" onclick="openApp('settings')">
           <div class="w-14 h-14 p-3 rounded-2xl bg-gradient-to-tr from-slate-700 to-slate-500 flex items-center justify-center text-white text-2xl shadow-lg border border-white/20">
             <i class="ph ph-gear-six"></i>
           </div>
-          <span class="text-[11px] font-medium text-slate-200 tracking-tight text-center">Cài Đặt</span>
+          <span class="text-[11px] font-medium dark:text-slate-200 text-slate-700 tracking-tight text-center">Cài Đặt</span>
         </div>
       </div>
 
-      <!-- Widget Nhắc Nhở Nhỏ Của Lọ Kỷ Niệm Hôm Nay -->
-      <div onclick="openApp('jar')" class="mb-3 bg-gradient-to-r from-pink-500/15 via-purple-500/15 to-amber-500/15 border border-pink-400/25 rounded-2xl p-3 flex items-center justify-between cursor-pointer active:scale-98 transition-all">
+      <div onclick="openApp('jar')" class="mb-3 bg-gradient-to-r dark:from-pink-500/15 dark:via-purple-500/15 dark:to-amber-500/15 from-pink-100 via-purple-100 to-amber-100 border dark:border-pink-400/25 border-pink-200 rounded-2xl p-3 flex items-center justify-between cursor-pointer active:scale-98 transition-all shadow-sm">
         <div class="flex items-center gap-2.5">
-          <div class="w-9 h-9 rounded-xl bg-pink-500/20 border border-pink-400/30 flex items-center justify-center text-lg">🫙</div>
+          <div class="w-9 h-9 rounded-xl dark:bg-pink-500/20 bg-pink-200 border dark:border-pink-400/30 border-pink-300 flex items-center justify-center text-lg">🫙</div>
           <div>
-            <div class="text-xs font-bold text-pink-200">Lọ Hôm Nay (<span id="homeJarCount">0</span> ngôi sao)</div>
-            <div class="text-[10px] text-slate-400">Chạm để thả sao Locket hoặc Note nhỏ ✨</div>
+            <div class="text-xs font-bold dark:text-pink-200 text-pink-700">Lọ Hôm Nay (<span id="homeJarCount">0</span> ngôi sao)</div>
+            <div class="text-[10px] dark:text-slate-400 text-slate-500">Chạm để thả sao Locket hoặc Note nhỏ ✨</div>
           </div>
         </div>
-        <i class="ph ph-caret-right text-pink-300"></i>
+        <i class="ph ph-caret-right dark:text-pink-300 text-pink-500"></i>
       </div>
 
-      <!-- Dock Bar -->
-      <div class="bg-white/10 border border-white/10 rounded-2xl p-2 px-5 flex items-center justify-around backdrop-blur-md">
+      <div class="dark:bg-white/10 bg-white/70 border dark:border-white/10 border-slate-200 rounded-2xl p-2 px-5 flex items-center justify-around backdrop-blur-md shadow-sm">
         <button onclick="openApp('reader')" class="p-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-amber-500 text-white text-xl active:scale-90 shadow-md"><i class="ph ph-play"></i></button>
         <button onclick="openApp('jar')" class="p-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-500 text-white text-xl active:scale-90 shadow-md"><i class="ph ph-camera"></i></button>
         <button onclick="openCreateModal()" class="p-2.5 rounded-xl bg-indigo-500 text-white text-xl active:scale-90 shadow-md"><i class="ph ph-plus"></i></button>
@@ -266,43 +260,35 @@
     </div>
 
 
-    <!-- ==================== 2. APP LỌ KỶ NIỆM & LOCKET (CUTE JAR DIARY) ==================== -->
-    <div id="jarApp" class="app-screen app-closed absolute inset-0 z-30 bg-gradient-to-b from-slate-950 via-purple-950/60 to-slate-950 flex flex-col justify-between overflow-hidden">
+    <!-- ==================== 2. APP LỌ KỶ NIỆM & LOCKET ==================== -->
+    <div id="jarApp" class="app-screen app-closed absolute inset-0 z-30 bg-gradient-to-b dark:from-slate-950 dark:via-purple-950/60 dark:to-slate-950 from-slate-100 via-purple-100 to-slate-200 flex flex-col justify-between overflow-hidden">
       
-      <!-- Header App Lọ Kỷ Niệm -->
-      <div class="px-3.5 pt-3 pb-2.5 flex items-center justify-between border-b border-white/10 bg-slate-900/80 backdrop-blur-md z-20">
+      <div class="px-3.5 pt-3 pb-2.5 flex items-center justify-between border-b dark:border-white/10 border-slate-200 dark:bg-slate-900/80 bg-white/80 backdrop-blur-md z-20">
         <div class="flex items-center gap-2">
-          <button onclick="closeCurrentApp()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-slate-200 active:scale-90">
+          <button onclick="closeCurrentApp()" class="w-8 h-8 rounded-full dark:bg-white/10 bg-slate-200 flex items-center justify-center dark:text-slate-200 text-slate-700 active:scale-90">
             <i class="ph ph-caret-left text-lg"></i>
           </button>
           <div>
-            <h2 class="text-xs font-black tracking-wide text-pink-300 flex items-center gap-1">
-              🫙 NGÂN HÀ KỶ NIỆM
-            </h2>
-            <div id="jarSelectedDateLabel" class="text-[10px] text-slate-400">Hôm nay</div>
+            <h2 class="text-xs font-black tracking-wide dark:text-pink-300 text-pink-600 flex items-center gap-1">🫙 NGÂN HÀ KỶ NIỆM</h2>
+            <div id="jarSelectedDateLabel" class="text-[10px] dark:text-slate-400 text-slate-500">Hôm nay</div>
           </div>
         </div>
 
-        <div class="flex items-center bg-black/40 p-1 rounded-xl border border-white/10 text-[11px]">
+        <div class="flex items-center dark:bg-black/40 bg-slate-200 p-1 rounded-xl border dark:border-white/10 border-transparent text-[11px]">
           <button onclick="switchJarTab('today')" id="jarTabTodayBtn" class="px-2.5 py-1 rounded-lg bg-pink-500 text-white font-bold transition-all">Lọ Ngày</button>
-          <button onclick="switchJarTab('shelf')" id="jarTabShelfBtn" class="px-2.5 py-1 rounded-lg text-slate-300 font-medium transition-all">Kệ Tháng</button>
+          <button onclick="switchJarTab('shelf')" id="jarTabShelfBtn" class="px-2.5 py-1 rounded-lg dark:text-slate-300 text-slate-600 font-medium transition-all">Kệ Tháng</button>
         </div>
       </div>
 
       <!-- TAB 1: CHIẾC LỌ TRONG NGÀY -->
       <div id="jarTodayView" class="flex-1 flex flex-col justify-between p-4 overflow-y-auto no-scrollbar">
-        
-        <!-- Khung Lọ Thủy Tinh -->
         <div class="my-auto flex flex-col items-center justify-center py-2 relative">
-          <!-- Decor Lễ Hội -->
           <div id="seasonalDecorTop" class="absolute -top-6 z-20 text-4xl pointer-events-none drop-shadow-md"></div>
-
           <div class="w-24 h-5 cork-lid rounded-t-lg shadow-md z-10 relative"></div>
           <div class="w-28 h-3 bg-white/20 border-x-2 border-t-2 border-white/30 rounded-t-sm"></div>
           
           <div id="mainGlassJar" onclick="openDayMemoriesModal()" class="relative w-52 h-64 glass-jar shadow-[inset_0_0_20px_rgba(255,255,255,0.12),0_12px_28px_rgba(0,0,0,0.35)] rounded-3xl p-3 flex flex-col justify-end items-center cursor-pointer active:scale-95 transition-all overflow-hidden group">
             <div id="seasonalDecorInside" class="absolute inset-0 pointer-events-none opacity-40 mix-blend-overlay text-6xl text-center pt-10"></div>
-            
             <div class="absolute top-3 left-3 w-2.5 h-44 bg-white/15 rounded-full blur-[1px] pointer-events-none"></div>
             <div class="absolute top-4 right-3.5 w-1 h-20 bg-white/10 rounded-full pointer-events-none"></div>
 
@@ -311,44 +297,37 @@
               <div id="jarTagCount" class="text-[9px] font-semibold text-slate-600">0 ngôi sao</div>
             </div>
 
-            <!-- Nơi chứa các ngôi sao -->
             <div id="jarItemsContainer" class="w-full flex flex-wrap-reverse items-center justify-center gap-2 pt-16 pb-2 max-h-44 overflow-hidden"></div>
 
-            <div class="mt-1 text-[9px] text-pink-200/80 font-semibold group-hover:text-white flex items-center gap-1 z-10">
+            <div class="mt-1 text-[9px] dark:text-pink-200/80 text-pink-800 font-semibold dark:group-hover:text-white group-hover:text-pink-600 flex items-center gap-1 z-10">
               <i class="ph ph-sparkle"></i> Chạm vào lọ để mở khóa
             </div>
           </div>
         </div>
 
-        <!-- Khung nhập liệu & Bàn phím Emoji -->
-        <div class="bg-slate-900/90 border border-white/10 rounded-2xl p-3 space-y-2.5 shadow-xl backdrop-blur-md relative">
-          
-          <!-- Lưới Emoji (Ẩn/Hiện) -->
-          <div id="emojiGrid" class="hidden absolute bottom-full left-0 mb-2 w-full bg-slate-800/95 backdrop-blur-md border border-white/15 rounded-xl p-2 max-h-40 overflow-y-auto grid grid-cols-7 gap-1 shadow-2xl z-50">
-            <!-- Render JS -->
-          </div>
+        <div class="dark:bg-slate-900/90 bg-white/90 border dark:border-white/10 border-slate-200 rounded-2xl p-3 space-y-2.5 shadow-xl backdrop-blur-md relative">
+          <div id="emojiGrid" class="hidden absolute bottom-full left-0 mb-2 w-full dark:bg-slate-800/95 bg-white/95 backdrop-blur-md border dark:border-white/15 border-slate-200 rounded-xl p-2 max-h-40 overflow-y-auto grid grid-cols-7 gap-1 shadow-2xl z-50"></div>
 
           <div class="flex items-center justify-between px-1">
-            <button onclick="toggleEmojiPicker()" class="flex items-center gap-1.5 px-2 py-1 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold text-white transition-colors">
+            <button onclick="toggleEmojiPicker()" class="flex items-center gap-1.5 px-2 py-1 dark:bg-white/10 bg-slate-200 hover:bg-slate-300 rounded-lg text-xs font-bold dark:text-white text-slate-800 transition-colors">
               <span id="currentSelectedEmoji" class="text-base drop-shadow">😊</span>
-              <i class="ph ph-caret-down text-[10px] text-slate-400"></i>
+              <i class="ph ph-caret-down text-[10px] dark:text-slate-400 text-slate-500"></i>
             </button>
-            <div class="text-[9px] text-emerald-400 font-semibold tracking-wider uppercase">Thả sao kỷ niệm</div>
+            <div class="text-[9px] dark:text-emerald-400 text-emerald-600 font-semibold tracking-wider uppercase">Thả sao kỷ niệm</div>
           </div>
 
-          <!-- Input Địa điểm & Text -->
           <div class="flex flex-col gap-2">
             <div class="flex items-center gap-2">
-              <div class="flex items-center bg-slate-800/90 border border-white/10 rounded-xl px-2.5 py-2 w-1/3 text-xs">
+              <div class="flex items-center dark:bg-slate-800/90 bg-slate-100 border dark:border-white/10 border-slate-200 rounded-xl px-2.5 py-2 w-1/3 text-xs">
                 <i class="ph-fill ph-map-pin text-rose-400 mr-1.5"></i>
-                <input type="text" id="quickNoteLocation" placeholder="Địa điểm..." class="w-full bg-transparent text-white placeholder-slate-400 focus:outline-none">
+                <input type="text" id="quickNoteLocation" placeholder="Địa điểm..." class="w-full bg-transparent dark:text-white text-slate-800 dark:placeholder-slate-400 placeholder-slate-500 focus:outline-none">
               </div>
-              <input type="text" id="quickNoteInput" placeholder="Viết một điều nhỏ xíu dễ thương..." class="flex-1 bg-slate-800/90 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-pink-400">
+              <input type="text" id="quickNoteInput" placeholder="Viết một điều nhỏ xíu dễ thương..." class="flex-1 dark:bg-slate-800/90 bg-slate-100 border dark:border-white/10 border-slate-200 rounded-xl px-3 py-2 text-xs dark:text-white text-slate-800 dark:placeholder-slate-400 placeholder-slate-500 focus:outline-none focus:border-pink-400">
             </div>
           </div>
 
           <div class="grid grid-cols-2 gap-2 pt-0.5">
-            <button onclick="openLocketCameraModal()" class="py-2 rounded-xl bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95">
+            <button onclick="openLocketCameraModal()" class="py-2 rounded-xl bg-amber-400/15 border border-amber-400/30 text-amber-600 dark:text-amber-300 font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95">
               <i class="ph-fill ph-camera text-sm"></i> Chụp Locket
             </button>
             <button onclick="dropQuickNoteIntoJar()" class="py-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 shadow-md">
@@ -361,15 +340,15 @@
       <!-- TAB 2: KỆ LỊCH THÁNG -->
       <div id="jarShelfView" class="flex-1 hidden flex-col justify-between p-4 overflow-y-auto no-scrollbar">
         <div>
-          <div class="flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl p-2.5 mb-4">
-            <button onclick="changeShelfMonth(-1)" class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white active:scale-90">
+          <div class="flex items-center justify-between dark:bg-white/5 bg-white/60 border dark:border-white/10 border-slate-200 rounded-2xl p-2.5 mb-4 shadow-sm">
+            <button onclick="changeShelfMonth(-1)" class="w-7 h-7 rounded-lg dark:bg-white/10 bg-slate-200 flex items-center justify-center dark:text-white text-slate-700 active:scale-90">
               <i class="ph ph-caret-left"></i>
             </button>
             <div class="text-center">
-              <div id="shelfMonthTitle" class="text-xs font-black text-amber-300 uppercase tracking-wider">THÁNG 10 / 2026</div>
-              <div class="text-[10px] text-slate-400">Kệ trưng bày ngân hà</div>
+              <div id="shelfMonthTitle" class="text-xs font-black dark:text-amber-300 text-amber-600 uppercase tracking-wider">THÁNG 10 / 2026</div>
+              <div class="text-[10px] dark:text-slate-400 text-slate-500">Kệ trưng bày ngân hà</div>
             </div>
-            <button onclick="changeShelfMonth(1)" class="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center text-white active:scale-90">
+            <button onclick="changeShelfMonth(1)" class="w-7 h-7 rounded-lg dark:bg-white/10 bg-slate-200 flex items-center justify-center dark:text-white text-slate-700 active:scale-90">
               <i class="ph ph-caret-right"></i>
             </button>
           </div>
@@ -440,9 +419,6 @@
           <button onclick="openLibraryDrawer()" class="px-2.5 py-1 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-[11px] font-semibold text-slate-200 flex items-center gap-1 active:scale-95">
             <i class="ph ph-bookmarks"></i> Đã lưu (<span id="savedBadgeCount">0</span>)
           </button>
-          <button onclick="toggleTheme()" class="w-8 h-8 rounded-full bg-black/40 backdrop-blur-md border border-white/10 flex items-center justify-center text-amber-300 text-sm active:scale-90">
-            <i id="themeIcon" class="ph ph-moon"></i>
-          </button>
         </div>
       </div>
 
@@ -451,24 +427,24 @@
 
 
     <!-- ==================== 4. GIAO DIỆN ĐỌC BÁO CHI TIẾT ==================== -->
-    <div id="articleDetailModal" class="fixed inset-0 z-50 bg-slate-950 flex flex-col justify-between transition-transform duration-300 translate-y-full">
-      <div class="w-full h-1 bg-white/10">
-        <div id="readingProgressBar" class="h-full bg-emerald-400 transition-all duration-150" style="width: 0%;"></div>
+    <div id="articleDetailModal" class="fixed inset-0 z-50 dark:bg-slate-950 bg-white flex flex-col justify-between transition-transform duration-300 translate-y-full">
+      <div class="w-full h-1 dark:bg-white/10 bg-slate-200">
+        <div id="readingProgressBar" class="h-full bg-emerald-500 transition-all duration-150" style="width: 0%;"></div>
       </div>
 
-      <div class="px-3 py-2.5 border-b border-white/10 bg-slate-900/95 backdrop-blur flex items-center justify-between z-10">
-        <button onclick="closeArticleDetail()" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white active:scale-90">
+      <div class="px-3 py-2.5 border-b dark:border-white/10 border-slate-200 dark:bg-slate-900/95 bg-white/95 backdrop-blur flex items-center justify-between z-10">
+        <button onclick="closeArticleDetail()" class="w-8 h-8 rounded-full dark:bg-white/10 bg-slate-200 flex items-center justify-center dark:text-white text-slate-800 active:scale-90">
           <i class="ph ph-arrow-left text-base"></i>
         </button>
         
         <div class="flex items-center gap-1.5">
-          <button onclick="toggleSpeechArticle()" id="ttsBtn" class="px-2 py-1 rounded-lg bg-white/10 text-slate-200 text-xs font-semibold flex items-center gap-1 active:scale-95">
+          <button onclick="toggleSpeechArticle()" id="ttsBtn" class="px-2 py-1 rounded-lg dark:bg-white/10 bg-slate-200 dark:text-slate-200 text-slate-800 text-xs font-semibold flex items-center gap-1 active:scale-95">
             <i class="ph ph-speaker-high"></i> <span id="ttsBtnText">Nghe</span>
           </button>
           <button onclick="generateStoryCardFromDetail()" class="px-2.5 py-1 rounded-lg bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[11px] font-bold flex items-center gap-1 active:scale-95">
             <i class="ph ph-instagram-logo"></i> Story
           </button>
-          <button onclick="toggleFavoriteCurrent()" id="detailHeartBtn" class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-rose-400 text-base active:scale-90">
+          <button onclick="toggleFavoriteCurrent()" id="detailHeartBtn" class="w-8 h-8 rounded-full dark:bg-white/10 bg-slate-200 flex items-center justify-center text-rose-500 text-base active:scale-90">
             <i class="ph ph-heart"></i>
           </button>
         </div>
@@ -477,11 +453,11 @@
       <div id="articleScrollArea" onscroll="updateReadingProgress()" class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar">
         <div class="space-y-2">
           <div class="flex items-center justify-between">
-            <span id="dtTopic" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/20 text-emerald-400 tracking-wider">#KHOA_HOC</span>
-            <span class="text-[11px] text-slate-400" id="dtParagraphCount">0 đoạn văn</span>
+            <span id="dtTopic" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 tracking-wider">#KHOA_HOC</span>
+            <span class="text-[11px] dark:text-slate-400 text-slate-500" id="dtParagraphCount">Bài viết chi tiết</span>
           </div>
-          <h1 id="dtTitle" class="text-xl font-black text-white leading-tight">Tiêu đề bài báo</h1>
-          <div class="text-[11px] text-slate-400 pb-2 border-b border-white/10 flex items-center justify-between">
+          <h1 id="dtTitle" class="text-xl font-black dark:text-white text-slate-900 leading-tight">Tiêu đề bài báo</h1>
+          <div class="text-[11px] dark:text-slate-400 text-slate-500 pb-2 border-b dark:border-white/10 border-slate-200 flex items-center justify-between">
             <span class="flex items-center gap-1"><i class="ph ph-newspaper-clipping"></i> Allin News Pro</span>
             <span id="dtDate">Hôm nay</span>
           </div>
@@ -493,15 +469,16 @@
           <span class="text-xs text-white/90 font-medium">Bản chi tiết đầy đủ – Tự do mở rộng</span>
         </div>
 
-        <div id="dtBodyParagraphs" class="space-y-3.5 text-slate-200 font-normal leading-relaxed font-size-md"></div>
+        <!-- Đoạn văn liền mạch -->
+        <div id="dtBodyParagraphs" class="space-y-3.5 dark:text-slate-200 text-slate-800 font-normal leading-relaxed font-size-md text-justify"></div>
 
-        <div class="p-4 rounded-2xl bg-white/5 border border-white/10 text-center space-y-2.5 mt-6">
-          <div class="text-xs text-slate-400">Bạn đã hoàn thành bài viết này!</div>
+        <div class="p-4 rounded-2xl dark:bg-white/5 bg-slate-100 border dark:border-white/10 border-slate-200 text-center space-y-2.5 mt-6">
+          <div class="text-xs dark:text-slate-400 text-slate-500">Bạn đã hoàn thành bài viết này!</div>
           <div class="flex items-center justify-center gap-2">
-            <button onclick="copyArticleShareText()" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs inline-flex items-center gap-1 active:scale-95">
+            <button onclick="copyArticleShareText()" class="px-3 py-2 rounded-xl dark:bg-white/10 bg-white border border-slate-200 dark:border-transparent dark:hover:bg-white/15 dark:text-white text-slate-800 font-bold text-xs inline-flex items-center gap-1 active:scale-95">
               <i class="ph ph-share-network"></i> Chia sẻ
             </button>
-            <button onclick="archiveAndNext()" class="px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs inline-flex items-center gap-1 active:scale-95 shadow-md">
+            <button onclick="archiveAndNext()" class="px-4 py-2 rounded-xl bg-emerald-500 text-white font-bold text-xs inline-flex items-center gap-1 active:scale-95 shadow-md">
               <i class="ph ph-check-circle"></i> Đã đọc & Quay lại feed
             </button>
           </div>
@@ -511,86 +488,108 @@
 
 
     <!-- ==================== 5. APP CÀI ĐẶT TOÀN DIỆN ==================== -->
-    <div id="settingsApp" class="app-screen app-closed absolute inset-0 z-30 bg-slate-950 flex flex-col">
-      <div class="px-3 py-2.5 flex items-center justify-between border-b border-white/10 bg-slate-900">
+    <div id="settingsApp" class="app-screen app-closed absolute inset-0 z-30 dark:bg-slate-950 bg-slate-50 flex flex-col">
+      <div class="px-3 py-2.5 flex items-center justify-between border-b dark:border-white/10 border-slate-200 dark:bg-slate-900 bg-white">
         <div class="flex items-center gap-2">
-          <button onclick="closeCurrentApp()" class="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-slate-200">
+          <button onclick="closeCurrentApp()" class="w-7 h-7 rounded-full dark:bg-white/10 bg-slate-200 flex items-center justify-center dark:text-slate-200 text-slate-800">
             <i class="ph ph-caret-left text-base"></i>
           </button>
-          <span class="font-bold text-sm text-white">Cài Đặt Hệ Thống</span>
+          <span class="font-bold text-sm dark:text-white text-slate-900">Cài Đặt Hệ Thống</span>
         </div>
       </div>
       
       <div class="flex-1 p-3.5 space-y-4 overflow-y-auto no-scrollbar text-xs">
         
-        <!-- Mục PWA trong Cài Đặt -->
         <div class="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-transparent border border-emerald-500/30 rounded-2xl p-3.5">
-          <div class="flex items-center gap-2 font-bold text-emerald-400 mb-1.5">
+          <div class="flex items-center gap-2 font-bold text-emerald-500 dark:text-emerald-400 mb-1.5">
             <i class="ph ph-download-simple text-base"></i> Cài Đặt Lên Màn Hình Chính
           </div>
-          <p class="text-[11px] text-slate-300 mb-3">Tận hưởng trải nghiệm độc lập, mượt mà và toàn màn hình như ứng dụng gốc.</p>
-          <button onclick="triggerPwaInstallPrompt()" class="w-full py-2 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 active:scale-95 shadow">
+          <p class="text-[11px] dark:text-slate-300 text-slate-600 mb-3">Tận hưởng trải nghiệm độc lập, mượt mà và toàn màn hình như ứng dụng gốc.</p>
+          <button onclick="triggerPwaInstallPrompt()" class="w-full py-2 rounded-xl bg-emerald-500 text-white font-black text-xs flex items-center justify-center gap-1.5 active:scale-95 shadow">
             <i class="ph-fill ph-plus-circle"></i> Thêm vào Màn Hình Chính Ngay
           </button>
         </div>
 
-        <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5">
-          <div class="flex items-center gap-2 font-bold text-emerald-400 mb-2">
-            <i class="ph ph-text-aa text-base"></i> Kiểu Chữ & Trải Nghiệm Đọc
+        <div class="dark:bg-white/5 bg-white border dark:border-white/10 border-slate-200 rounded-2xl p-3.5 shadow-sm">
+          <div class="flex items-center gap-2 font-bold text-emerald-500 dark:text-emerald-400 mb-2">
+            <i class="ph ph-text-aa text-base"></i> Kiểu Chữ & Giao Diện
           </div>
           <div class="space-y-3">
             <div>
-              <div class="text-[11px] text-slate-300 font-semibold mb-1">Cỡ chữ bài báo</div>
+              <div class="text-[11px] dark:text-slate-300 text-slate-600 font-semibold mb-1">Cỡ chữ bài báo</div>
               <div class="grid grid-cols-3 gap-2">
-                <button onclick="setFontSize('sm')" id="fontSmBtn" class="py-1.5 rounded-lg border border-white/10 text-[11px] text-slate-300">Nhỏ</button>
-                <button onclick="setFontSize('md')" id="fontMdBtn" class="py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-300 font-bold text-[11px]">Vừa</button>
-                <button onclick="setFontSize('lg')" id="fontLgBtn" class="py-1.5 rounded-lg border border-white/10 text-[11px] text-slate-300">Lớn</button>
+                <button id="fontSmBtn" onclick="setFontSize('sm')" class="py-1.5 rounded-lg border dark:border-white/10 border-slate-200 text-[11px] dark:text-slate-300 text-slate-600 transition-all">Nhỏ</button>
+                <button id="fontMdBtn" onclick="setFontSize('md')" class="py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 font-bold text-[11px] transition-all">Vừa</button>
+                <button id="fontLgBtn" onclick="setFontSize('lg')" class="py-1.5 rounded-lg border dark:border-white/10 border-slate-200 text-[11px] dark:text-slate-300 text-slate-600 transition-all">Lớn</button>
               </div>
             </div>
 
-            <div class="pt-2 border-t border-white/5 flex items-center justify-between">
-              <span class="text-[11px] text-slate-300 font-semibold">Phông chữ</span>
+            <div class="pt-2 border-t dark:border-white/5 border-slate-100 flex items-center justify-between">
+              <span class="text-[11px] dark:text-slate-300 text-slate-600 font-semibold">Phông chữ</span>
               <div class="flex items-center gap-1.5">
-                <button onclick="setFontFamily('sans')" id="fontSansBtn" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500 text-emerald-300 font-bold text-[11px]">Sans Hiện Đại</button>
-                <button onclick="setFontFamily('serif')" id="fontSerifBtn" class="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-[11px]">Serif Báo Chí</button>
+                <button id="fontSansBtn" onclick="setFontFamily('sans')" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500 text-emerald-600 dark:text-emerald-300 font-bold text-[11px] transition-all">Sans Hiện Đại</button>
+                <button id="fontSerifBtn" onclick="setFontFamily('serif')" class="px-2.5 py-1 rounded-lg dark:bg-white/5 bg-slate-100 border dark:border-white/10 border-slate-200 dark:text-slate-300 text-slate-600 text-[11px] transition-all">Serif Báo Chí</button>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t dark:border-white/5 border-slate-100 flex items-center justify-between">
+              <span class="text-[11px] dark:text-slate-300 text-slate-600 font-semibold">Giao diện (Theme)</span>
+              <div class="flex items-center gap-1.5">
+                <button id="themeLightBtn" onclick="setTheme('light')" class="px-2.5 py-1 rounded-lg dark:bg-white/5 bg-slate-100 border dark:border-white/10 border-slate-200 dark:text-slate-300 text-slate-600 text-[11px] transition-all"><i class="ph-fill ph-sun"></i> Sáng</button>
+                <button id="themeDarkBtn" onclick="setTheme('dark')" class="px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500 text-emerald-600 dark:text-emerald-300 font-bold text-[11px] transition-all"><i class="ph-fill ph-moon"></i> Tối</button>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5">
-          <div class="flex items-center gap-2 font-bold text-amber-400 mb-2.5">
+        <div class="dark:bg-white/5 bg-white border dark:border-white/10 border-slate-200 rounded-2xl p-3.5 shadow-sm">
+          <div class="flex items-center gap-2 font-bold text-amber-500 dark:text-amber-400 mb-2.5">
             <i class="ph ph-chart-bar text-base"></i> Thống Kê Hoạt Động
           </div>
           <div class="grid grid-cols-3 gap-2 text-center">
-            <div class="p-2 rounded-xl bg-black/30 border border-white/5">
-              <div id="statTotalArticles" class="text-base font-extrabold text-white">0</div>
-              <div class="text-[9px] text-slate-400 mt-0.5">Tổng bài</div>
+            <div class="p-2 rounded-xl dark:bg-black/30 bg-slate-50 border dark:border-white/5 border-slate-200">
+              <div id="statTotalArticles" class="text-base font-extrabold dark:text-white text-slate-900">0</div>
+              <div class="text-[9px] dark:text-slate-400 text-slate-500 mt-0.5">Tổng bài</div>
             </div>
-            <div class="p-2 rounded-xl bg-black/30 border border-white/5">
-              <div id="statReadArticles" class="text-base font-extrabold text-emerald-400">0</div>
-              <div class="text-[9px] text-slate-400 mt-0.5">Đã đọc xong</div>
+            <div class="p-2 rounded-xl dark:bg-black/30 bg-slate-50 border dark:border-white/5 border-slate-200">
+              <div id="statReadArticles" class="text-base font-extrabold text-emerald-500 dark:text-emerald-400">0</div>
+              <div class="text-[9px] dark:text-slate-400 text-slate-500 mt-0.5">Đã đọc xong</div>
             </div>
-            <div class="p-2 rounded-xl bg-black/30 border border-white/5">
-              <div id="statStreakDays" class="text-base font-extrabold text-amber-400">1</div>
-              <div class="text-[9px] text-slate-400 mt-0.5">Chuỗi ngày 🔥</div>
+            <div class="p-2 rounded-xl dark:bg-black/30 bg-slate-50 border dark:border-white/5 border-slate-200">
+              <div id="statStreakDays" class="text-base font-extrabold text-amber-500 dark:text-amber-400">1</div>
+              <div class="text-[9px] dark:text-slate-400 text-slate-500 mt-0.5">Chuỗi ngày 🔥</div>
             </div>
           </div>
         </div>
 
-        <div class="bg-white/5 border border-white/10 rounded-2xl p-3.5">
-          <div class="flex items-center gap-2 font-bold text-indigo-400 mb-2">
+        <div class="dark:bg-white/5 bg-white border dark:border-white/10 border-slate-200 rounded-2xl p-3.5 shadow-sm">
+          <div class="flex items-center gap-2 font-bold text-indigo-500 dark:text-indigo-400 mb-2">
             <i class="ph ph-floppy-disk-back text-base"></i> Sao Lưu & Đồng Bộ
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <button onclick="exportBackupData()" class="py-2 rounded-xl bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 font-bold text-xs flex items-center justify-center gap-1 active:scale-95">
+            <button onclick="exportBackupData()" class="py-2 rounded-xl dark:bg-indigo-600/30 bg-indigo-100 border dark:border-indigo-500/40 border-indigo-200 text-indigo-600 dark:text-indigo-300 font-bold text-xs flex items-center justify-center gap-1 active:scale-95">
               <i class="ph ph-export"></i> Xuất File JSON
             </button>
-            <label class="py-2 rounded-xl bg-white/10 border border-white/15 text-slate-200 font-bold text-xs flex items-center justify-center gap-1 active:scale-95 cursor-pointer text-center">
+            <label class="py-2 rounded-xl dark:bg-white/10 bg-slate-100 border dark:border-white/15 border-slate-200 dark:text-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-1 active:scale-95 cursor-pointer text-center">
               <i class="ph ph-import"></i> Nạp File JSON
               <input type="file" id="importFileInput" onchange="importBackupData(event)" accept=".json" class="hidden">
             </label>
           </div>
+        </div>
+
+        <div class="dark:bg-white/5 bg-white border dark:border-white/10 border-slate-200 rounded-2xl p-3.5 shadow-sm mt-4">
+          <div class="flex items-center gap-2 font-bold text-rose-500 dark:text-rose-400 mb-2">
+            <i class="ph ph-warning text-base"></i> Quản Lý Dữ Liệu
+          </div>
+          <p class="text-[11px] dark:text-slate-300 text-slate-600 mb-3">Xóa toàn bộ bài báo và lọ kỷ niệm để làm lại từ đầu. Không thể hoàn tác.</p>
+          <button onclick="clearAllData()" class="w-full py-2 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-600 dark:text-rose-400 font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95">
+            <i class="ph ph-trash"></i> Xóa toàn bộ dữ liệu & Khôi phục gốc
+          </button>
+        </div>
+
+        <div class="text-center pt-2 pb-6">
+          <p class="text-[10px] dark:text-slate-500 text-slate-400 font-bold tracking-widest uppercase">OMNI SPACE PRO v2.1</p>
+          <p class="text-[9px] dark:text-slate-600 text-slate-400">Thiết kế dành riêng cho bạn</p>
         </div>
       </div>
     </div>
@@ -616,9 +615,10 @@
             </button>
           </div>
 
+          <!-- Mặc định mở Tab Dán Nguyên Bài cho nhanh -->
           <div class="flex items-center gap-1 bg-white/5 p-1 rounded-xl mb-3 text-[11px]">
-            <button onclick="switchInputMode('manual')" id="modeManualBtn" class="flex-1 py-1 rounded-lg bg-indigo-600 text-white font-bold transition-all">Từng đoạn</button>
-            <button onclick="switchInputMode('raw')" id="modeRawBtn" class="flex-1 py-1 rounded-lg text-slate-400 font-medium transition-all">Dán nguyên bài tự tách</button>
+            <button onclick="switchInputMode('raw')" id="modeRawBtn" class="flex-1 py-1 rounded-lg bg-indigo-600 text-white font-bold transition-all">Dán nguyên bài</button>
+            <button onclick="switchInputMode('manual')" id="modeManualBtn" class="flex-1 py-1 rounded-lg text-slate-400 font-medium transition-all">Từng đoạn</button>
           </div>
 
           <div class="mb-2.5">
@@ -633,18 +633,7 @@
               class="w-full bg-slate-800 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-white focus:outline-none focus:border-indigo-500">
           </div>
 
-          <div id="manualSection" class="mb-3">
-            <div class="flex items-center justify-between mb-1.5">
-              <label class="block text-[10px] font-bold text-slate-300 uppercase">Nội dung các đoạn</label>
-              <button onclick="fillSampleTemplate()" class="text-[10px] text-indigo-400 hover:underline">Dán mẫu thử</button>
-            </div>
-            <div id="paragraphsInputsContainer" class="space-y-2"></div>
-            <button onclick="addParagraphField()" type="button" class="mt-2 w-full py-1.5 rounded-lg border border-dashed border-indigo-500/40 text-indigo-300 hover:bg-indigo-500/10 text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition-all">
-              <i class="ph ph-plus-circle"></i> Thêm đoạn tiếp theo
-            </button>
-          </div>
-
-          <div id="rawSection" class="mb-3 hidden">
+          <div id="rawSection" class="mb-3">
             <div class="flex items-center justify-between mb-1">
               <label class="block text-[10px] font-bold text-slate-300 uppercase">Dán toàn bộ bài thô vào đây</label>
               <button onclick="autoHighlightRawText()" class="text-[10px] text-amber-300 hover:underline flex items-center gap-0.5">
@@ -653,6 +642,17 @@
             </div>
             <textarea id="rawTextInput" rows="6" placeholder="Dán nội dung bất kỳ tại đây..." 
               class="w-full bg-slate-800 border border-white/10 rounded-lg p-2.5 text-xs text-white focus:outline-none focus:border-indigo-500 leading-relaxed"></textarea>
+          </div>
+
+          <div id="manualSection" class="mb-3 hidden">
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-[10px] font-bold text-slate-300 uppercase">Nội dung các đoạn</label>
+              <button onclick="fillSampleTemplate()" class="text-[10px] text-indigo-400 hover:underline">Dán mẫu thử</button>
+            </div>
+            <div id="paragraphsInputsContainer" class="space-y-2"></div>
+            <button onclick="addParagraphField()" type="button" class="mt-2 w-full py-1.5 rounded-lg border border-dashed border-indigo-500/40 text-indigo-300 hover:bg-indigo-500/10 text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition-all">
+              <i class="ph ph-plus-circle"></i> Thêm đoạn tiếp theo
+            </button>
           </div>
         </div>
 
@@ -930,6 +930,12 @@
     let viewingArticleId = null;
     let libTab = 'explore';
     let currentFilter = 'all';
+    
+    // Tích hợp logic Theme
+    let currentTheme = localStorage.getItem('omni_theme') || 'dark';
+    if(currentTheme === 'light') document.documentElement.classList.remove('dark');
+    else document.documentElement.classList.add('dark');
+
     let currentFontSize = localStorage.getItem('omni_font_size') || 'md';
     let currentFontFamily = localStorage.getItem('omni_font_family') || 'sans';
     let isSpeaking = false;
@@ -983,6 +989,7 @@
       updateStreak();
       applyFontSize(currentFontSize);
       applyFontFamily(currentFontFamily);
+      updateSettingsUI(); // Nạp giao diện cài đặt ngay khi load
       updateSettingsStats();
       initParagraphInputs();
       renderEmojiKeyboard();
@@ -1030,6 +1037,7 @@
       } else if (appName === 'settings') {
         document.getElementById('settingsApp').classList.remove('app-closed');
         document.getElementById('settingsApp').classList.add('app-open');
+        updateSettingsUI();
         updateSettingsStats();
       }
     }
@@ -1074,14 +1082,14 @@
         shelfView.classList.add('hidden');
         shelfView.classList.remove('flex');
         btnToday.className = "px-2.5 py-1 rounded-lg bg-pink-500 text-white font-bold transition-all";
-        btnShelf.className = "px-2.5 py-1 rounded-lg text-slate-300 font-medium transition-all";
+        btnShelf.className = "px-2.5 py-1 rounded-lg dark:text-slate-300 text-slate-600 font-medium transition-all";
         renderCurrentJar();
       } else {
         todayView.classList.add('hidden');
         shelfView.classList.remove('hidden');
         shelfView.classList.add('flex');
         btnShelf.className = "px-2.5 py-1 rounded-lg bg-pink-500 text-white font-bold transition-all";
-        btnToday.className = "px-2.5 py-1 rounded-lg text-slate-300 font-medium transition-all";
+        btnToday.className = "px-2.5 py-1 rounded-lg dark:text-slate-300 text-slate-600 font-medium transition-all";
         renderMonthlyShelf();
       }
     }
@@ -1207,7 +1215,7 @@
 
     async function startCameraStream() {
       try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
         const video = document.getElementById('locketVideo');
         video.srcObject = cameraStream;
         video.classList.remove('hidden');
@@ -1216,7 +1224,7 @@
         document.getElementById('btnStartCam').classList.add('hidden');
         document.getElementById('btnCaptureCam').classList.remove('hidden');
       } catch (err) {
-        alert("Không thể mở Camera trực tiếp. Bạn bấm 'Chọn ảnh' từ máy nhé!");
+        alert("Không thể mở Camera. Bạn bấm 'Chọn ảnh' từ máy nhé!");
       }
     }
 
@@ -1343,16 +1351,16 @@
             `;
           } else {
             innerContent = `
-              <div class="bg-white/5 border border-white/10 p-3.5 flex flex-col gap-1.5">
+              <div class="dark:bg-white/5 bg-white border dark:border-white/10 border-slate-200 p-3.5 flex flex-col gap-1.5 shadow-sm">
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-2">
                     <div class="w-7 h-7 rounded-full text-sm flex items-center justify-center shadow" style="background-color: ${eDef.c}20; color: ${eDef.c}">${item.mood}</div>
-                    <span class="text-[9px] text-slate-400">${item.time}</span>
+                    <span class="text-[9px] dark:text-slate-400 text-slate-500">${item.time}</span>
                   </div>
                   <button onclick="event.stopPropagation(); deleteJarItem('${item.id}')" class="text-slate-500 hover:text-rose-400 p-1"><i class="ph ph-trash text-xs"></i></button>
                 </div>
                 ${locHtml}
-                <div class="text-xs text-white leading-relaxed font-medium pl-1">${item.text}</div>
+                <div class="text-xs dark:text-white text-slate-800 leading-relaxed font-medium pl-1">${item.text}</div>
               </div>
             `;
           }
@@ -1489,12 +1497,12 @@
                 <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-rose-500/20 text-rose-400 border border-rose-500/30">
                   ${art.topic || '#KHOA_HOC'}
                 </span>
-                <span class="text-[10px] text-slate-400">${art.pages.length} đoạn</span>
+                <span class="text-[10px] text-slate-400">Bài viết chi tiết</span>
               </div>
               <h2 class="text-2xl font-black text-white leading-tight drop-shadow-md">${art.title}</h2>
               <div class="text-sm text-slate-200 leading-relaxed font-normal pt-1">${formattedSnippet}</div>
               <div class="pt-2 flex items-center gap-1.5 text-xs text-amber-300 font-semibold">
-                <i class="ph ph-cursor-click"></i> Chạm để đọc toàn bộ ${art.pages.length} đoạn
+                <i class="ph ph-cursor-click"></i> Chạm để đọc toàn bộ bài viết
               </div>
             </div>
 
@@ -1537,21 +1545,15 @@
 
       document.getElementById('dtTitle').innerText = art.title;
       document.getElementById('dtTopic').innerText = art.topic || '#KHOA_HOC';
-      document.getElementById('dtParagraphCount').innerText = `${art.pages.length} đoạn nội dung`;
       
-      const paragraphsHtml = art.pages.map((p, idx) => {
+      const paragraphsHtml = art.pages.map((p) => {
         const formatted = p.replace(/==(.*?)==/g, '<span class="allin-hl">$1</span>');
-        return `
-          <div class="p-3.5 rounded-xl bg-white/5 border border-white/5 leading-relaxed">
-            <span class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Đoạn ${idx + 1}</span>
-            <p>${formatted}</p>
-          </div>
-        `;
+        return `<p>${formatted}</p>`;
       }).join('');
 
       document.getElementById('dtBodyParagraphs').innerHTML = paragraphsHtml;
       const heartBtn = document.getElementById('detailHeartBtn');
-      heartBtn.className = `w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-base active:scale-90 ${art.liked ? 'text-rose-500' : 'text-slate-300'}`;
+      heartBtn.className = `w-8 h-8 rounded-full dark:bg-white/10 bg-slate-200 flex items-center justify-center text-base active:scale-90 ${art.liked ? 'text-rose-500' : 'dark:text-slate-300 text-slate-700'}`;
 
       document.getElementById('articleDetailModal').classList.remove('translate-y-full');
       updateReadingProgress();
@@ -1627,14 +1629,126 @@
       localStorage.setItem('omni_articles_pro_v1', JSON.stringify(articles));
     }
 
+    /* ==================== CẬP NHẬT CÀI ĐẶT UI ==================== */
+    function updateSettingsUI() {
+      const sizes = ['sm', 'md', 'lg'];
+      sizes.forEach(s => {
+        const btn = document.getElementById('font' + s.charAt(0).toUpperCase() + s.slice(1) + 'Btn');
+        if(btn) {
+          if (s === currentFontSize) {
+            btn.className = "py-1.5 rounded-lg border border-emerald-500 bg-emerald-500/20 text-emerald-600 dark:text-emerald-300 font-bold text-[11px] transition-all";
+          } else {
+            btn.className = "py-1.5 rounded-lg border dark:border-white/10 border-slate-200 text-[11px] dark:text-slate-300 text-slate-600 transition-all";
+          }
+        }
+      });
+
+      const famSans = document.getElementById('fontSansBtn');
+      const famSerif = document.getElementById('fontSerifBtn');
+      if (famSans && famSerif) {
+        if (currentFontFamily === 'sans') {
+          famSans.className = "px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500 text-emerald-600 dark:text-emerald-300 font-bold text-[11px] transition-all";
+          famSerif.className = "px-2.5 py-1 rounded-lg dark:bg-white/5 bg-slate-100 border dark:border-white/10 border-slate-200 dark:text-slate-300 text-slate-600 text-[11px] transition-all";
+        } else {
+          famSerif.className = "px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500 text-emerald-600 dark:text-emerald-300 font-bold text-[11px] transition-all";
+          famSans.className = "px-2.5 py-1 rounded-lg dark:bg-white/5 bg-slate-100 border dark:border-white/10 border-slate-200 dark:text-slate-300 text-slate-600 text-[11px] transition-all";
+        }
+      }
+
+      const themeDark = document.getElementById('themeDarkBtn');
+      const themeLight = document.getElementById('themeLightBtn');
+      if(themeDark && themeLight) {
+        if (currentTheme === 'dark') {
+          themeDark.className = "px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500 text-emerald-600 dark:text-emerald-300 font-bold text-[11px] transition-all";
+          themeLight.className = "px-2.5 py-1 rounded-lg dark:bg-white/5 bg-slate-100 border dark:border-white/10 border-slate-200 dark:text-slate-300 text-slate-600 text-[11px] transition-all";
+        } else {
+          themeLight.className = "px-2.5 py-1 rounded-lg bg-emerald-500/20 border border-emerald-500 text-emerald-600 dark:text-emerald-300 font-bold text-[11px] transition-all";
+          themeDark.className = "px-2.5 py-1 rounded-lg dark:bg-white/5 bg-slate-100 border dark:border-white/10 border-slate-200 dark:text-slate-300 text-slate-600 text-[11px] transition-all";
+        }
+      }
+    }
+
+    function setFontSize(size) { 
+      currentFontSize = size; 
+      localStorage.setItem('omni_font_size', size); 
+      applyFontSize(size);
+      updateSettingsUI();
+    }
+    
+    function applyFontSize(size) {
+      const content = document.getElementById('dtBodyParagraphs');
+      if(content) {
+        content.classList.remove('font-size-sm', 'font-size-md', 'font-size-lg');
+        content.classList.add(`font-size-${size}`);
+      }
+    }
+
+    function setFontFamily(family) { 
+      currentFontFamily = family; 
+      localStorage.setItem('omni_font_family', family); 
+      applyFontFamily(family);
+      updateSettingsUI();
+    }
+    
+    function applyFontFamily(family) {
+      document.body.classList.remove('font-sans-mode', 'font-serif-mode');
+      document.body.classList.add(family === 'serif' ? 'font-serif-mode' : 'font-sans-mode');
+    }
+
+    function toggleTheme() {
+      setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+    }
+
+    function setTheme(theme) {
+      currentTheme = theme;
+      localStorage.setItem('omni_theme', currentTheme);
+      if(currentTheme === 'light') document.documentElement.classList.remove('dark');
+      else document.documentElement.classList.add('dark');
+      updateSettingsUI();
+    }
+
+    function clearAllData() {
+      if(confirm("Bạn có chắc chắn muốn XÓA TOÀN BỘ bài báo và bình kỷ niệm không? Hành động này không thể hoàn tác!")) {
+        localStorage.clear();
+        
+        // Khôi phục lại mẫu mặc định
+        articles = [...DEFAULT_ARTICLES];
+        saveArticles();
+
+        jarLogs = {};
+        jarLogs[todayKey()] = [
+          {
+            id: 'm_sample_1',
+            type: 'note',
+            text: 'Hôm nay trời mát mẻ, mình vừa dọn dẹp lại Omni Space ✨',
+            mood: '😊',
+            location: 'Ở nhà',
+            time: '08:30'
+          }
+        ];
+        localStorage.setItem('omni_cute_jar_v2', JSON.stringify(jarLogs));
+        
+        localStorage.setItem('omni_theme', currentTheme);
+        localStorage.setItem('omni_font_size', currentFontSize);
+        localStorage.setItem('omni_font_family', currentFontFamily);
+
+        renderTikTokFeed();
+        renderCurrentJar();
+        renderMonthlyShelf();
+        updateSettingsStats();
+        
+        alert("Đã khôi phục cài đặt gốc thành công!");
+      }
+    }
+
     /* SOẠN BÀI & PROMPT AI */
-    let currentInputMode = 'manual';
+    let currentInputMode = 'raw';
     function switchInputMode(mode) {
       currentInputMode = mode;
       document.getElementById('manualSection').classList.toggle('hidden', mode !== 'manual');
       document.getElementById('rawSection').classList.toggle('hidden', mode === 'manual');
-      document.getElementById('modeManualBtn').className = mode === 'manual' ? "flex-1 py-1 rounded-lg bg-indigo-600 text-white font-bold" : "flex-1 py-1 rounded-lg text-slate-400 font-medium";
-      document.getElementById('modeRawBtn').className = mode !== 'manual' ? "flex-1 py-1 rounded-lg bg-indigo-600 text-white font-bold" : "flex-1 py-1 rounded-lg text-slate-400 font-medium";
+      document.getElementById('modeManualBtn').className = mode === 'manual' ? "flex-1 py-1 rounded-lg bg-indigo-600 text-white font-bold transition-all" : "flex-1 py-1 rounded-lg text-slate-400 font-medium transition-all";
+      document.getElementById('modeRawBtn').className = mode !== 'manual' ? "flex-1 py-1 rounded-lg bg-indigo-600 text-white font-bold transition-all" : "flex-1 py-1 rounded-lg text-slate-400 font-medium transition-all";
     }
 
     function autoHighlightRawText() {
@@ -1669,7 +1783,11 @@
       btn.closest('.p-row').remove();
     }
 
-    function openCreateModal() { document.getElementById('createModal').classList.remove('hidden'); }
+    function openCreateModal() { 
+      document.getElementById('createModal').classList.remove('hidden'); 
+      switchInputMode('raw'); // Mặc định mở phần dán tự động
+    }
+    
     function closeCreateModal() { document.getElementById('createModal').classList.add('hidden'); }
 
     function fillSampleTemplate() {
@@ -1712,6 +1830,9 @@
         pages
       });
       saveArticles();
+      document.getElementById('manualTitle').value = '';
+      document.getElementById('manualTopic').value = '';
+      document.getElementById('rawTextInput').value = '';
       closeCreateModal();
       openApp('reader');
     }
@@ -1724,7 +1845,7 @@
 
     function updateAiPromptPreview() {
       const topic = document.getElementById('aiTopicInput').value.trim() || "[Chủ đề bạn muốn tìm]";
-      document.getElementById('promptPreviewText').innerText = `Hãy biên soạn bài viết ngắn hấp dẫn về chủ đề: "${topic}". Chia thành nhiều đoạn súc tích, mỗi đoạn bọc từ khóa quan trọng nhất trong cặp dấu ==...==.`;
+      document.getElementById('promptPreviewText').innerText = `Hãy biên soạn một bài báo hấp dẫn và chuyên sâu về chủ đề: "${topic}". Trình bày mạch lạc, tự nhiên và liền mạch (có ngắt xuống dòng hợp lý để dễ đọc). Đừng quên bọc các từ khóa hoặc thông tin quan trọng nhất bằng cặp dấu ==...== để làm nổi bật nhé (ví dụ: ==từ khóa==).`;
     }
 
     function copyAiPromptToClipboard() {
@@ -1774,19 +1895,6 @@
       });
     }
 
-    function setFontSize(size) { currentFontSize = size; localStorage.setItem('omni_font_size', size); applyFontSize(size); }
-    function applyFontSize(size) {
-      const content = document.getElementById('dtBodyParagraphs');
-      content.classList.remove('font-size-sm', 'font-size-md', 'font-size-lg');
-      content.classList.add(`font-size-${size}`);
-    }
-
-    function setFontFamily(family) { currentFontFamily = family; localStorage.setItem('omni_font_family', family); applyFontFamily(family); }
-    function applyFontFamily(family) {
-      document.body.classList.remove('font-sans-mode', 'font-serif-mode');
-      document.body.classList.add(family === 'serif' ? 'font-serif-mode' : 'font-sans-mode');
-    }
-
     function updateSettingsStats() {
       document.getElementById('statTotalArticles').innerText = articles.length;
       document.getElementById('statReadArticles').innerText = articles.filter(a => a.archived).length;
@@ -1823,8 +1931,6 @@
     function updateStreak() {
       document.getElementById('streakCount').innerText = localStorage.getItem('omni_streak_clean_v1') || 1;
     }
-
-    function toggleTheme() { document.documentElement.classList.toggle('dark'); }
 
     function setAppFilter(cat) {
       currentFilter = cat;
